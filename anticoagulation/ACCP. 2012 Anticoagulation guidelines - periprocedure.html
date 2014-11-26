@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>2012 ACCP Periprocedure anticoagulation guidelines</title>
+
+<!-- jquery -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<!-- tooltip -->
+<script type="text/javascript" src="qtip/jquery.qtip.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="qtip/jquery.qtip.min.css" />
+<script>
+	var rcriscore = -1;
+	var estMETs = -1;
+	var lowrisk = 0;
+	function printoutput(){
+		var recommendationtext = $("#recommendationssource").html();
+		var rationaletext = $("#rationalesource").html()
+		var considerationstext =  $("#considerationssource").html();
+		$("#minordentaltip").hide();
+		$("#minordermtip").hide();
+		$("#cataracttip").hide();
+		$("#terisk").show();
+		$("#yesbridgingtip").hide();
+		$("#maybebridgingtip").hide();
+		$("#nobridgingtip").hide();
+		$("#output").css('background','rgba(0,191,2,0)')
+		$("#considerations").css('background','rgba(0,191,2,0)')
+		$(".lowrisksurgery").each(function() {
+			if (this.checked) { 
+				lowrisk = 1;
+				if($(this).attr("id") == "lowrisksurgery1")
+					{
+					recommendationtext = recommendationtext.replace('1.  ', '1. Continue warfarin with oral prohemostatic agent -OR- Stop warfarin 2-3 days prior to sprocedure. (Rec 2.5 of ACCP 2012 Guidelines).')
+					rationaletext = rationaletext.replace('bleedrisk', '< 5% risk for clinically relevant nonmajor bleeding if warfarin is continued')
+					rationaletext = rationaletext.replace('terisk', '< 0.1% if warfarin is continued')
+					considerationstext = considerationstext.replace('<!--lowrisksurgery-->', '<div>&bull; If warfarin is not stopped, \"minor bleeding (or oozing from gingival mucosa) may be more common...continue tranexamic acid use and to apply local pressure to stop such bleeding...If tranexamic acid is used, it is given as a 5-mL oral dose, 5 to 10 min before the dental procedure and 3 to 4 times daily for 1 to 2 days after the procedure.\" (Rec 2.5 of <a href=\"http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3278059/\">ACCP 2012 Guideline</a>).</div>')
+					$("#minordentaltip").show();
+					}
+				if($(this).attr("id") == "lowrisksurgery2")
+					{
+					recommendationtext = recommendationtext.replace('1.  ', '1. Continue warfarin and optimize local hemostasis. (Rec 2.5 of ACCP 2012 Guidelines).')
+					rationaletext = rationaletext.replace('bleedrisk', '< 5% risk for \'major bleeding\'')
+					rationaletext = rationaletext.replace('terisk', 'not stated in guidelines')
+					considerationstext = considerationstext.replace('<!--lowrisksurgery-->', '<div>&bull; No additional considerations</div>')
+					$("#minordermtip").show();
+					}
+				if($(this).attr("id") == "lowrisksurgery3")
+					{
+					recommendationtext = recommendationtext.replace('1.  ', '1. Continue warfarin. (Rec 2.5 of ACCP 2012 Guidelines).')
+					rationaletext = rationaletext.replace('bleedrisk', '< 3% risk for \'clinically important bleeding\' and 10% overall incidence of bleeding such as dot hyphemias or subconjunctival bleeds without compromised visual acuity related to bleeding')
+					rationaletext = rationaletext.replace('terisk', 'low (1%-2%) incidence of ATE if bridging occurs')
+					considerationstext = considerationstext.replace('<!--lowrisksurgery-->', '')
+					$("#cataracttip").show();
+					}
+				if($(this).attr("id") == "lowrisksurgery4")
+					{
+					lowrisk = 0;
+					$("#terisk").show();
+					}
+				}
+		});
+		if (lowrisk == 1)
+			{
+			$("#terisk").hide();
+			recommendationtext = recommendationtext.replace('2.  ', '')
+			recommendationtext = recommendationtext.replace('3.  ', '')
+			recommendationtext = recommendationtext.replace('4.  ', '')
+			recommendationtext = recommendationtext.replace('5.  ', '')
+			recommendationtext = recommendationtext.replace('6.  ', '')
+			recommendationtext = recommendationtext.replace('7.  ', '')
+			}
+		if (lowrisk == 0)
+			{
+			recommendationtext = recommendationtext.replace('1.  ', '1. Stop warfarin 5 days prior to procedure. (Rec 2.5 of ACCP 2012 Guidelines).')
+			recommendationtext = recommendationtext.replace('2.  ', '2. Check INR the day before prcedure. 7% of patients will have INR > 1.5. If so, give \'low-dose (1 mg) oral vitamin K\'. (Suggested in 2.5 of ACCP 2012 Guidelines)')
+			$(".te").each(function() {
+				if (this.checked) { 
+					if($(this).attr("id") == "te3")
+						{
+						recommendationtext = recommendationtext.replace('3.  ', '3. No bridging. (Rec 2.4 of ACCP 2012 Guidelines).')
+						recommendationtext = recommendationtext.replace('4.  ', '')
+						recommendationtext = recommendationtext.replace('5.  ', '')
+						recommendationtext = recommendationtext.replace('6.  ', '')
+						recommendationtext = recommendationtext.replace('7.  ', '')
+						rationaletext = rationaletext.replace('bleedrisk', 'Not stated in guidelines')
+						rationaletext = rationaletext.replace('terisk', 'very low (< 1%)')
+						considerationstext = considerationstext.replace('<!--lowrisksurgery-->', '')
+						$("#nobridgingtip").show();
+						}
+					if($(this).attr("id") == "te2")
+						{
+						recommendationtext = recommendationtext.replace('3.  ', '3. \'Bridging or no-bridging...based on an assessment of individual patient- and surgery-related factors\'. (Rec 2.4 of ACCP 2012 Guidelines).<div>&nbsp;</div><div>If bridging is done:</div>')
+						recommendationtext = recommendationtext.replace('4.  ', '1. Administer \'the last preoperative dose of LMWH approximately 24 h before surgery\'. (Rec 4.3 of ACCP 2012 Guidelines).')
+						recommendationtext = recommendationtext.replace('5.  ', '2. Resume warfarin \'approximately 12 to 24 h after surgery (evening of or next morning) and when there is adequate hemostasis\'. (Rec 2.2 of ACCP 2012 Guidelines)')
+						recommendationtext = recommendationtext.replace('6.  ', '3. Resume \'therapeutic-dose LMWH 24 h after surgery\' or \'48 to 72 h after surgery\' if \'high-bleeding-risk surgery\'. (Rec 4.4 of ACCP 2012 Guidelines)')
+						recommendationtext = recommendationtext.replace('7.  ', '4. Check INR at 3-5 days after surgery\'. (Suggested in ACCP rec 2.2)')
+						rationaletext = rationaletext.replace('bleedrisk', 'Not stated in guidelines')
+						rationaletext = rationaletext.replace('terisk', '~1%, \'irrespective of the management strategy used\'')
+						considerationstext = considerationstext.replace('<!--lowrisksurgery-->', '<div>&bull; \" Therapeutic-dose LMWH is...(Rec 2.5 of <a href=\"http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3278059/\">ACCP 2012 Guideline</a>).</div>')
+						$("#maybebridgingtip").show();
+						}
+					if($(this).attr("id") == "te1")
+						{
+						recommendationtext = recommendationtext.replace('3.  ', '3. Bridging with therapeutic dose of LMWH. (ACCP rec 2.4).')
+						recommendationtext = recommendationtext.replace('4.  ', '4. Administer \'the last preoperative dose of LMWH approximately 24 h before surgery\'. (Rec 4.3 of ACCP 2012 Guidelines).')
+						recommendationtext = recommendationtext.replace('5.  ', '5. Resume warfarin \'approximately 12 to 24 h after surgery (evening of or next morning) and when there is adequate hemostasis\'. (ACCP rec 2.2)')
+						recommendationtext = recommendationtext.replace('6.  ', '6. Resume \'therapeutic-dose LMWH 24 h after surgery\' or \'48 to 72 h after surgery\' if \'high-bleeding-risk surgery\'. (ACCP rec 4.4)')
+						recommendationtext = recommendationtext.replace('7.  ', '7. Check INR at 5 days fter surgery\'. (Suggested in ACCP rec 2.2)')
+						rationaletext = rationaletext.replace('bleedrisk', 'Not stated in guidelines')
+						rationaletext = rationaletext.replace('terisk', 'low (1%-2%) incidence of ATE if bridging occurs')
+						considerationstext = considerationstext.replace('<!--lowrisksurgery-->', '<div>&bull; Therapeutic-dose LMWH is \'enoxaparin 1 mg/kg bid or 1.5 mg/kg daily, dalteparin 100 International Units/kg bid or 200 International Units/kg daily, tinzaparin 175 International Units/kg daily\'(See definitions at start of <a href=\"http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3278059/\">ACCP 2012 Guideline</a>).</div>')
+						$("#yesbridgingtip").show();
+						}
+					}
+			});
+			}
+		$("#output").html(recommendationtext + "</div><div>&nbsp;</div><div style='font-weight:bold'>Rationale</div>" + rationaletext) 
+		$("#output").css('background','rgba(0,191,2,0.25)')
+		$("#considerations").html(considerationstext + "<div>&bull; Provide \'patients and providers with a calendar outlining the perioperative timing of warfarin and antiplatelet drug discontinuation and resumption, dose and timing of LMWH bridging, and INR measurement schedule.\'</div>")
+	}
+    //init this script when the page has loaded
+    $(document).ready(function(){
+		$('.selector').qtip({
+		style: { classes: 'myCustomClass' }
+		});
+
+	//http://qtip2.com/
+	// Apply tooltip on all <a/> elements with title attributes. Mousing over
+    // these elements will the show tooltip as expected, but mousing onto the
+    // tooltip is now possible for interaction with it's contents.
+    //$('a').each(function () {
+    $('.hastip').each(function () {
+        $(this).qtip(
+			{
+            content: {text: $("#" + $(this).attr("id") + "tip").html()},
+            hide: {
+                fixed: true,
+                delay: 300
+            },
+			position: {
+				my: 'bottom left',  // Position my top left...
+				at: 'bottom right', // at the bottom right of...
+			},
+			style: { classes: 'ToolTipClass',
+			width: false // No set width
+			}
+		});
+	});
+
+	$('.hastip').click(function(e) {
+		e.stopPropagation();
+		return false;
+	});	
+      //this is only needed when using CORS (i.e. web pages hosted outside opencpu)
+      //if(!location.pathname.match("^/ocpu/.*/appdemo/www")){
+      //  opencpu.seturl("//public.opencpu.org/ocpu/library/appdemo/R");
+      //}
+  });
+	
+    </script>
+    
+    <style>
+		th {
+			background-color:#6DC6E7;
+			color:#0022B4;
+			border:0px;
+			spacing:5px;
+			text-align:center;
+			vertical-align: middle;
+		}
+		td{
+			vertical-align:top;
+			padding:5px;
+			spacing:0px;
+		}
+		table{
+			border:0px;
+		}
+		caption{
+		font-size:20px;
+		font-weight:bold;
+		}
+	  .tooltiptext{
+			display: none;
+		}
+	  .ToolTipClass{
+		color:#0022B4;
+		border-width: 3px;
+		border-color: #0022B4;
+		background-color: white;
+		max-width: 600px;
+		}
+    </style>
+	
+</head>
+<body>
+
+<h1>2012 ACCP Periprocedure anticoagulation gudelines</h1>
+<h2 style="color:#0022B4">Instructions</h2>
+<table style="border:0;width:1600">
+<tr><td>
+<div class="container" style="width:1600px;">
+<div id="intro">
+<span style="background-color :rgba(255,160,122,0.25)">Nodes in the figure below that are colored light-salmon can be clicked for further guidance</span> and to generate text that can be copied into the electronic health record and then individualized as needed.
+</div>
+<div style="float:left;color:#0022B4;" id="leftcol">
+
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="786" height="700">
+<defs/>
+<g transform="translate(0,0)"><g><rect fill="#FFFFFF" stroke="none" x="0" y="0" width="786" height="700"/></g>
+<g transform="translate(0,0) matrix(1,0,0,1,310,18)"><g><g transform="translate(0,0) scale(1.6,0.75)"><g><path fill="#FFFFFF" stroke="none" d="M 0 0 L 100 0 Q 100 0 100 0 L 100 100 Q 100 100 100 100 L 0 100 Q 0 100 0 100 L 0 0 Q 0 0 0 0 Z"/><g transform="scale(0.625,1.3333333333333333)"><path fill="none" stroke="none" d="M 0 0 L 160 0 Q 160 0 160 0 L 160 75 Q 160 75 160 75 L 0 75 Q 0 75 0 75 L 0 0 Q 0 0 0 0 Z"/><path fill="none" stroke="#333333" d="M 0 0 M 0 0 L 160 0 Q 160 0 160 0 L 160 75 Q 160 75 160 75 L 0 75 Q 0 75 0 75 L 0 0 Q 0 0 0 0 Z" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+</g>
+<g transform="scale(1,1) matrix(1,0,0,1,313.2,18) translate(8,20)">
+<text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="23" y="11">Risk of bleeding</text><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="24.299999999999983" y="25">associated with </text><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="15.299999999999983" y="39">surgery/procedure?</text></g>
+			<a id="node0" class="hastip" xlink:href="#">
+			<rect
+               style="fill:rgba(255,160,122,0.25)"
+               id="rect4730"
+               width="200"
+               height="100"
+               x="390"
+               y="565"
+               transform="matrix(0.8,0,0,-0.8,0,547.5)" />
+			</a>
+<g transform="translate(0,0) matrix(1,0,0,1,180,130)"><g><g transform="translate(0,0) scale(1,0.75)"><g><path fill="#FFFFFF" stroke="none" d="M 0 0 L 100 0 Q 100 0 100 0 L 100 100 Q 100 100 100 100 L 0 100 Q 0 100 0 100 L 0 0 Q 0 0 0 0 Z"/><g transform="scale(1,1.3333333333333333)"><path fill="none" stroke="none" d="M 0 0 L 100 0 Q 100 0 100 0 L 100 75 Q 100 75 100 75 L 0 75 Q 0 75 0 75 L 0 0 Q 0 0 0 0 Z"/><path fill="none" stroke="#333333" d="M 0 0 M 0 0 L 100 0 Q 100 0 100 0 L 100 75 Q 100 75 100 75 L 0 75 Q 0 75 0 75 L 0 0 Q 0 0 0 0 Z" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+</g>
+<g transform="scale(1,1) matrix(1,0,0,1,182,130) translate(8,30.5)"><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="17" y="11">Low risk</text></g>
+<g transform="translate(0,0) matrix(1,0,0,1,42.5,260)"><g><g transform="translate(0,0) scale(1,0.6)"><g><path fill="#FFFFFF" stroke="none" d="M 0 0 L 100 0 Q 100 0 100 0 L 100 100 Q 100 100 100 100 L 0 100 Q 0 100 0 100 L 0 0 Q 0 0 0 0 Z"/><g transform="scale(1,1.6666666666666667)"><path fill="none" stroke="none" d="M 0 0 L 100 0 Q 100 0 100 0 L 100 60 Q 100 60 100 60 L 0 60 Q 0 60 0 60 L 0 0 Q 0 0 0 0 Z"/><path fill="none" stroke="#333333" d="M 0 0 M 0 0 L 100 0 Q 100 0 100 0 L 100 60 Q 100 60 100 60 L 0 60 Q 0 60 0 60 L 0 0 Q 0 0 0 0 Z" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+</g>
+<g transform="scale(1,1) matrix(1,0,0,1,44.5,260) translate(8,16)"><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="5" y="11">Minor dental </text><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="12" y="25">procedure</text></g>
+<g transform="matrix(1,0,0,1,225.5,88.49999999999999)"><g transform="translate(0,0)"><g transform="translate(-149,-104) translate(-76.5,15.500000000000014) matrix(1,0,0,1,0,0)"><g><path fill="none" stroke="#000000" d="M 356.8629150101524 92.99999999999999 L 356.8629150101524 102.25 Q 356.8629150101524 111.5 346.8629150101524 111.5 L 240 111.5 Q 230 111.5 230 120.75 L 230 130" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+<g transform="matrix(1,0,0,1,88,200.5)"><g transform="translate(0,0)"><g transform="translate(-77,-234) translate(-11,33.5) matrix(1,0,0,1,0,0)"><g><path fill="none" stroke="#000000" d="M 230 205 L 230 222.5 Q 230 232.5 220 232.5 L 102.5 232.5 Q 92.5 232.5 92.5 242.5 L 92.5 260" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+<g transform="translate(0,0) matrix(1,0,0,1,475,130)"><g><g transform="translate(0,0) scale(1.7,0.75)"><g><path fill="#FFFFFF" stroke="none" d="M 0 0 L 100 0 Q 100 0 100 0 L 100 100 Q 100 100 100 100 L 0 100 Q 0 100 0 100 L 0 0 Q 0 0 0 0 Z"/><g transform="scale(0.5882352941176471,1.3333333333333333)"><path fill="none" stroke="none" d="M 0 0 L 170 0 Q 170 0 170 0 L 170 75 Q 170 75 170 75 L 0 75 Q 0 75 0 75 L 0 0 Q 0 0 0 0 Z"/><path fill="none" stroke="#333333" d="M 0 0 M 0 0 L 170 0 Q 170 0 170 0 L 170 75 Q 170 75 170 75 L 0 75 Q 0 75 0 75 L 0 0 Q 0 0 0 0 Z" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+</g>
+<g transform="scale(1,1) matrix(1,0,0,1,478.4,130) translate(8,30.5)"><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="7.099999999999994" y="11">Intermediate or high risk</text></g>
+<g transform="matrix(1,0,0,1,418.6370849898476,88.5)"><g transform="translate(0,0)"><g transform="translate(-532,-93) translate(113.36291501015239,4.5) matrix(1,0,0,1,0,0)"><g><path fill="none" stroke="#000000" d="M 423.1370849898476 93 L 423.1370849898476 102.25 Q 423.1370849898476 111.5 433.1370849898476 111.5 L 550 111.5 Q 560 111.5 560 120.75 L 560 130" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+<g transform="translate(0,0) matrix(1,0,0,1,30,360)"><g><g transform="translate(0,0) scale(1.25,1.5)"><g><path fill="#FFFFFF" stroke="none" d="M 0 0 L 100 0 Q 100 0 100 0 L 100 100 Q 100 100 100 100 L 0 100 Q 0 100 0 100 L 0 0 Q 0 0 0 0 Z"/><g transform="scale(0.8,0.6666666666666666)"><path fill="none" stroke="none" d="M 0 0 L 125 0 Q 125 0 125 0 L 125 150 Q 125 150 125 150 L 0 150 Q 0 150 0 150 L 0 0 Q 0 0 0 0 Z"/><path fill="none" stroke="#333333" d="M 0 0 M 0 0 L 125 0 Q 125 0 125 0 L 125 150 Q 125 150 125 150 L 0 150 Q 0 150 0 150 L 0 0 Q 0 0 0 0 Z" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+</g>
+<g transform="scale(1,1) matrix(1,0,0,1,32.5,355) translate(8,12)">
+<text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="0.5" y="11">Continue VKA with </text><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="40" y="25">oral </text><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="11" y="39">prohemostatic </text><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="37" y="53">agent</text><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="50.5" y="67">&#160;</text><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="39" y="81">-OR-</text><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="50.5" y="95">&#160;</text><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="0.5" y="109">Stop VKA 2-3 days </text><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="31.5" y="123">prior to </text><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="2" y="137">surgery/procedure</text></g>
+			<a id="node2" class="hastip" xlink:href="#">
+				<rect
+               style="fill:rgba(0,191,2,0.25);display:none"
+               id="minordentaltip"
+               width="150"
+               height="180"
+               x="40"
+               y="50"
+               transform="matrix(0.8,0,0,-0.8,0,547.5)" />
+			</a>
+<g transform="translate(0,0) matrix(1,0,0,1,180,260)"><g><g transform="translate(0,0) scale(1,0.6)"><g><path fill="#FFFFFF" stroke="none" d="M 0 0 L 100 0 Q 100 0 100 0 L 100 100 Q 100 100 100 100 L 0 100 Q 0 100 0 100 L 0 0 Q 0 0 0 0 Z"/><g transform="scale(1,1.6666666666666667)"><path fill="none" stroke="none" d="M 0 0 L 100 0 Q 100 0 100 0 L 100 60 Q 100 60 100 60 L 0 60 Q 0 60 0 60 L 0 0 Q 0 0 0 0 Z"/><path fill="none" stroke="#333333" d="M 0 0 M 0 0 L 100 0 Q 100 0 100 0 L 100 60 Q 100 60 100 60 L 0 60 Q 0 60 0 60 L 0 0 Q 0 0 0 0 Z" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+</g>
+<g transform="scale(1,1) matrix(1,0,0,1,182,260) translate(8,9)"><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="23.5" y="11">Minor </text><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="2.5" y="25">dermatologic </text><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="12" y="39">procedure</text></g>
+<g transform="translate(0,0) matrix(1,0,0,1,318,260)"><g><g transform="translate(0,0) scale(1,0.6)"><g><path fill="#FFFFFF" stroke="none" d="M 0 0 L 100 0 Q 100 0 100 0 L 100 100 Q 100 100 100 100 L 0 100 Q 0 100 0 100 L 0 0 Q 0 0 0 0 Z"/><g transform="scale(1,1.6666666666666667)"><path fill="none" stroke="none" d="M 0 0 L 100 0 Q 100 0 100 0 L 100 60 Q 100 60 100 60 L 0 60 Q 0 60 0 60 L 0 0 Q 0 0 0 0 Z"/><path fill="none" stroke="#333333" d="M 0 0 M 0 0 L 100 0 Q 100 0 100 0 L 100 60 Q 100 60 100 60 L 0 60 Q 0 60 0 60 L 0 0 Q 0 0 0 0 Z" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+</g>
+<g transform="scale(1,1) matrix(1,0,0,1,320,260) translate(8,16)"><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="15.5" y="11">Cataract </text><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="19.5" y="25">surgery</text></g>
+<g transform="translate(0,0) matrix(1,0,0,1,170,360)"><g><g transform="translate(0,0) scale(1.2,0.75)"><g><path fill="#FFFFFF" stroke="none" d="M 0 0 L 100 0 Q 100 0 100 0 L 100 100 Q 100 100 100 100 L 0 100 Q 0 100 0 100 L 0 0 Q 0 0 0 0 Z"/><g transform="scale(0.8333333333333334,1.3333333333333333)"><path fill="none" stroke="none" d="M 0 0 L 120 0 Q 120 0 120 0 L 120 75 Q 120 75 120 75 L 0 75 Q 0 75 0 75 L 0 0 Q 0 0 0 0 Z"/><path fill="none" stroke="#333333" d="M 0 0 M 0 0 L 120 0 Q 120 0 120 0 L 120 75 Q 120 75 120 75 L 0 75 Q 0 75 0 75 L 0 0 Q 0 0 0 0 Z" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+</g>
+<g transform="scale(1,1) matrix(1,0,0,1,172.4,360) translate(8,14)"><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="10.6" y="11">Continue VKA </text><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="13.1" y="25">and optimize </text><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="2.1" y="39">local hemostasis</text></g>
+			<a id="node3" class="hastip" xlink:href="#">
+			<rect
+			 style="fill:rgba(0,191,2,0.25);display:none"
+			 id="minordermtip"
+			 width="150"
+			 height="90"
+			 x="215"
+			 y="140"
+			 transform="matrix(0.8,0,0,-0.8,0,547.5)" />
+			</a>
+<g transform="translate(0,0) matrix(1,0,0,1,318,360)"><g><g transform="translate(0,0) scale(1,0.75)"><g><path fill="#FFFFFF" stroke="none" d="M 0 0 L 100 0 Q 100 0 100 0 L 100 100 Q 100 100 100 100 L 0 100 Q 0 100 0 100 L 0 0 Q 0 0 0 0 Z"/><g transform="scale(1,1.3333333333333333)"><path fill="none" stroke="none" d="M 0 0 L 100 0 Q 100 0 100 0 L 100 75 Q 100 75 100 75 L 0 75 Q 0 75 0 75 L 0 0 Q 0 0 0 0 Z"/><path fill="none" stroke="#333333" d="M 0 0 M 0 0 L 100 0 Q 100 0 100 0 L 100 75 Q 100 75 100 75 L 0 75 Q 0 75 0 75 L 0 0 Q 0 0 0 0 Z" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+</g>
+<g transform="scale(1,1) matrix(1,0,0,1,320,360) translate(8,29.5)"><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="2.5" y="11">Continue VKA</text></g>
+			<a id="node4" class="hastip" xlink:href="#">
+				<rect
+               style="fill:rgba(0,191,2,0.25);display:none"
+               id="cataracttip"
+               width="125"
+               height="90"
+               x="400"
+               y="140"
+               transform="matrix(0.8,0,0,-0.8,0,547.5)" />
+			</a>
+<g transform="matrix(1,0,0,1,225.5,200.5)"><g transform="translate(0,0)"><g transform="translate(-287,-204) translate(61.5,3.5) matrix(1,0,0,1,0,0)"><g><path fill="none" stroke="#000000" d="M 230 205 L 230 214.16666666666669 Q 230 223.33333333333334 230 232.5 L 230 232.5 Q 230 241.66666666666666 230 250.83333333333331 L 230 260" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+<g transform="matrix(1,0,0,1,225.5,200.5)"><g transform="translate(0,0)"><g transform="translate(-290,-203) translate(64.5,2.5) matrix(1,0,0,1,0,0)"><g><path fill="none" stroke="#000000" d="M 230 205 L 230 222.5 Q 230 232.5 240 232.5 L 358 232.5 Q 368 232.5 368 242.5 L 368 260" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+<g transform="matrix(1,0,0,1,88,315.5)"><g transform="translate(0,0)"><g transform="translate(-104,-319) translate(16,3.5) matrix(1,0,0,1,0,0)"><g><path fill="none" stroke="#000000" d="M 92.5 320 L 92.5 326.66666666666663 Q 92.5 333.3333333333333 92.5 340 L 92.5 340 Q 92.5 346.6666666666667 92.5 353.33333333333337 L 92.5 360" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+<g transform="matrix(1,0,0,1,225.5,315.5)"><g transform="translate(0,0)"><g transform="translate(-290,-321) translate(64.5,5.5) matrix(1,0,0,1,0,0)"><g><path fill="none" stroke="#000000" d="M 230 320 L 230 326.66666666666663 Q 230 333.3333333333333 230 340 L 230 340 Q 230 346.6666666666667 230 353.33333333333337 L 230 360" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+<g transform="matrix(1,0,0,1,363.5,315.5)"><g transform="translate(0,0)"><g transform="translate(-467,-319) translate(103.5,3.5) matrix(1,0,0,1,0,0)"><g><path fill="none" stroke="#000000" d="M 368 320 L 368 326.66666666666663 Q 368 333.3333333333333 368 340 L 368 340 Q 368 346.6666666666667 368 353.33333333333337 L 368 360" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+<g transform="translate(0,0) matrix(1,0,0,1,492.5,252.5)"><g><g transform="translate(0,0) scale(1.35,0.75)"><g><path fill="#FFFFFF" stroke="none" d="M 0 0 L 100 0 Q 100 0 100 0 L 100 100 Q 100 100 100 100 L 0 100 Q 0 100 0 100 L 0 0 Q 0 0 0 0 Z"/><g transform="scale(0.7407407407407407,1.3333333333333333)"><path fill="none" stroke="none" d="M 0 0 L 135 0 Q 135 0 135 0 L 135 75 Q 135 75 135 75 L 0 75 Q 0 75 0 75 L 0 0 Q 0 0 0 0 Z"/><path fill="none" stroke="#333333" d="M 0 0 M 0 0 L 135 0 Q 135 0 135 0 L 135 75 Q 135 75 135 75 L 0 75 Q 0 75 0 75 L 0 0 Q 0 0 0 0 Z" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+</g>
+<g transform="scale(1,1) matrix(1,0,0,1,495.2,252.5) translate(8,16.5)"><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="10.799999999999997" y="11">Stop VKA 5 days </text><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="36.3" y="25">prior to </text><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="6.8" y="39">surgery/procedure</text></g>
+<g transform="translate(0,0) matrix(1,0,0,1,475,360)"><g><g transform="translate(0,0) scale(1.7,0.75)"><g><path fill="#FFFFFF" stroke="none" d="M 0 0 L 100 0 Q 100 0 100 0 L 100 100 Q 100 100 100 100 L 0 100 Q 0 100 0 100 L 0 0 Q 0 0 0 0 Z"/><g transform="scale(0.5882352941176471,1.3333333333333333)"><path fill="none" stroke="none" d="M 0 0 L 170 0 Q 170 0 170 0 L 170 75 Q 170 75 170 75 L 0 75 Q 0 75 0 75 L 0 0 Q 0 0 0 0 Z"/><path fill="none" stroke="#333333" d="M 0 0 M 0 0 L 170 0 Q 170 0 170 0 L 170 75 Q 170 75 170 75 L 0 75 Q 0 75 0 75 L 0 0 Q 0 0 0 0 Z" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+</g>
+<g transform="scale(1,1) matrix(1,0,0,1,478.4,360) translate(8,9.5)"><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="14.1" y="11">Risk for perioperative </text><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="2.1" y="25">thromboembolism based </text><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="4.1" y="39">on patient's indication for </text>
+<text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="41.10000000000001" y="53">VKA therapy</text></g>
+			<a id="node1" class="hastip" xlink:href="#">
+				<rect
+               style="fill:rgba(255,160,122,0.25);display:none"
+               id="terisk"
+               width="220"
+               height="95"
+               x="590"
+               y="140"
+               transform="matrix(0.8,0,0,-0.8,0,547.5)" />
+			</a>
+<g transform="matrix(1,0,0,1,555.5,200.5)"><g transform="translate(0,0)"><g transform="translate(-745,-203) translate(189.5,2.5) matrix(1,0,0,1,0,0)"><g><path fill="none" stroke="#000000" d="M 560 205 L 560 212.91666666666669 Q 560 220.83333333333334 560 228.75 L 560 228.75 Q 560 236.66666666666666 560 244.58333333333331 L 560 252.5" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+<g transform="matrix(1,0,0,1,555.5,323)"><g transform="translate(0,0)"><g transform="translate(-745,-320) translate(189.5,-3) matrix(1,0,0,1,0,0)"><g><path fill="none" stroke="#000000" d="M 560 327.5 L 560 332.91666666666663 Q 560 338.3333333333333 560 343.75 L 560 343.75 Q 560 349.1666666666667 560 354.58333333333337 L 560 360" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+<g transform="translate(0,0) matrix(1,0,0,1,392.5,472.5)"><g><g transform="translate(0,0) scale(1,0.75)"><g><path fill="#FFFFFF" stroke="none" d="M 0 0 L 100 0 Q 100 0 100 0 L 100 100 Q 100 100 100 100 L 0 100 Q 0 100 0 100 L 0 0 Q 0 0 0 0 Z"/><g transform="scale(1,1.3333333333333333)"><path fill="none" stroke="none" d="M 0 0 L 100 0 Q 100 0 100 0 L 100 75 Q 100 75 100 75 L 0 75 Q 0 75 0 75 L 0 0 Q 0 0 0 0 Z"/><path fill="none" stroke="#333333" d="M 0 0 M 0 0 L 100 0 Q 100 0 100 0 L 100 75 Q 100 75 100 75 L 0 75 Q 0 75 0 75 L 0 0 Q 0 0 0 0 Z" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+</g>
+<g transform="scale(1,1) matrix(1,0,0,1,394.5,472.5) translate(8,30.5)">
+<text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="17" y="11">Low risk</text></g>
+<g transform="translate(0,0) matrix(1,0,0,1,510,472.5)"><g><g transform="translate(0,0) scale(1,0.75)"><g><path fill="#FFFFFF" stroke="none" d="M 0 0 L 100 0 Q 100 0 100 0 L 100 100 Q 100 100 100 100 L 0 100 Q 0 100 0 100 L 0 0 Q 0 0 0 0 Z"/><g transform="scale(1,1.3333333333333333)"><path fill="none" stroke="none" d="M 0 0 L 100 0 Q 100 0 100 0 L 100 75 Q 100 75 100 75 L 0 75 Q 0 75 0 75 L 0 0 Q 0 0 0 0 Z"/><path fill="none" stroke="#333333" d="M 0 0 M 0 0 L 100 0 Q 100 0 100 0 L 100 75 Q 100 75 100 75 L 0 75 Q 0 75 0 75 L 0 0 Q 0 0 0 0 Z" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+</g>
+<g transform="scale(1,1) matrix(1,0,0,1,512,472.5) translate(8,30.5)"><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="3" y="11">Moderate risk</text></g>
+<g transform="translate(0,0) matrix(1,0,0,1,627.5,472.5)"><g><g transform="translate(0,0) scale(1,0.75)"><g><path fill="#FFFFFF" stroke="none" d="M 0 0 L 100 0 Q 100 0 100 0 L 100 100 Q 100 100 100 100 L 0 100 Q 0 100 0 100 L 0 0 Q 0 0 0 0 Z"/><g transform="scale(1,1.3333333333333333)"><path fill="none" stroke="none" d="M 0 0 L 100 0 Q 100 0 100 0 L 100 75 Q 100 75 100 75 L 0 75 Q 0 75 0 75 L 0 0 Q 0 0 0 0 Z"/><path fill="none" stroke="#333333" d="M 0 0 M 0 0 L 100 0 Q 100 0 100 0 L 100 75 Q 100 75 100 75 L 0 75 Q 0 75 0 75 L 0 0 Q 0 0 0 0 Z" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+</g>
+<g transform="scale(1,1) matrix(1,0,0,1,629.5,472.5) translate(8,30.5)">
+<text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="15.5" y="11">High risk</text></g>
+	<g transform="translate(0,0) matrix(1,0,0,1,342.5,590)">
+		<g>
+			<g transform="translate(0,0) scale(1,0.75)">
+				<g>
+					<g transform="scale(1,1.3333333333333333)">
+					<path fill="none" stroke="#333333" d="M 0 0 L 100 0 L 100 75 L 0 75 L 0 0 Z" stroke-miterlimit="10" stroke-width="2"/>
+				</g>
+			</g>
+		</g>
+	</g>
+</g>
+<g transform="scale(1,1) matrix(1,0,0,1,344.5,590) translate(8,29.5)">
+<text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="8" y="11">No bridging</text></g>
+			<a id="node06" class="hastip" xlink:href="#">
+			<rect
+               style="fill:rgba(0,191,2,0.25);display:none"
+               id="nobridgingtip"
+               width="130"
+               height="90"
+               x="425"
+               y="2"
+               transform="matrix(0.8,0,0,-0.8,0,665)" />
+			</a>
+<g transform="translate(0,0) matrix(1,0,0,1,475,590)">
+	<g>
+		<g transform="translate(0,0) scale(1.7,0.9)">
+			<g>
+				<g transform="scale(0.5882352941176471,1.1111111111111112)">
+				<path fill="none" stroke="#333333" d="M 0 0 L 170 0 L 170 75 L 0 75 L 0 0 Z" stroke-miterlimit="10" stroke-width="2"/>
+			</g>
+		</g>
+	</g>
+</g>
+</g>
+<g transform="scale(1,1) matrix(1,0,0,1,478.4,590) translate(8,18)">
+<text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="9.6" y="11">Bridging or no bridging </text><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="5.1" y="25">depends on patient- and </text><text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="12.1" y="39">surgery-related factors</text></g>
+			<a id="node07" class="hastip" xlink:href="#">
+			<rect
+               style="fill:rgba(0,191,2,0.25);display:none"
+               id="maybebridgingtip"
+               width="220"
+               height="90"
+               x="590"
+               y="2"
+               transform="matrix(0.8,0,0,-0.8,0,665)" />
+			</a>
+<g transform="translate(0,0) matrix(1,0,0,1,660,590)">
+	<g>
+		<g transform="translate(0,0) scale(1,0.75)">
+			<g>
+				<g transform="scale(1,1.3333333333333333)">
+					<path fill="none" stroke="#333333" d="M 0 0 L 100 0 L 100 75 L 0 75 L 0 0 Z" stroke-miterlimit="10" stroke-width="2"/>
+				</g>
+			</g>
+		</g>
+	</g>
+</g>
+<g transform="scale(1,1) matrix(1,0,0,1,662,590) translate(8,29.5)">
+<text fill="#000000" stroke="none" font-family="Arial" font-size="12px" x="17" y="11">Bridging</text></g>
+			<a id="node08" class="hastip" xlink:href="#">
+			<rect
+               style="fill:rgba(0,191,2,0.25);display:none"
+               id="yesbridgingtip"
+               width="130"
+               height="90"
+               x="825"
+               y="2"
+               transform="matrix(0.8,0,0,-0.8,0,665)" />
+			</a>
+<g transform="matrix(1,0,0,1,438,430.5)"><g transform="translate(0,0)"><g transform="translate(-708,-437) translate(270,6.5) matrix(1,0,0,1,0,0)"><g><path fill="none" stroke="#000000" d="M 560 435 L 560 444.375 Q 560 453.75 550 453.75 L 452.5 453.75 Q 442.5 453.75 442.5 463.125 L 442.5 472.5" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+<g transform="matrix(1,0,0,1,555.5,430.5)"><g transform="translate(0,0)"><g transform="translate(-744,-435) translate(188.5,4.5) matrix(1,0,0,1,0,0)"><g><path fill="none" stroke="#000000" d="M 560 435 L 560 441.25 Q 560 447.5 560 453.75 L 560 453.75 Q 560 460 560 466.25 L 560 472.5" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+<g transform="matrix(1,0,0,1,555.5,430.5)"><g transform="translate(0,0)"><g transform="translate(-779,-435) translate(223.5,4.5) matrix(1,0,0,1,0,0)"><g><path fill="none" stroke="#000000" d="M 560 435 L 560 444.375 Q 560 453.75 570 453.75 L 667.5 453.75 Q 677.5 453.75 677.5 463.125 L 677.5 472.5" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+<g transform="matrix(1,0,0,1,388,543)"><g transform="translate(0,0)"><g transform="translate(-559,-567) translate(171,24) matrix(1,0,0,1,0,0)"><g><path fill="none" stroke="#000000" d="M 442.5 547.5 L 442.5 558.75 Q 442.5 568.75 432.5 568.75 L 402.5 568.75 Q 392.5 568.75 392.5 578.75 L 392.5 590" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+<g transform="matrix(1,0,0,1,555.5,543)"><g transform="translate(0,0)"><g transform="translate(-744,-566) translate(188.5,23) matrix(1,0,0,1,0,0)"><g><path fill="none" stroke="#000000" d="M 560 547.5 L 560 554.5833333333333 Q 560 561.6666666666666 560 568.75 L 560 568.75 Q 560 575.8333333333334 560 582.9166666666667 L 560 590" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+<g transform="matrix(1,0,0,1,673,543)"><g transform="translate(0,0)"><g transform="translate(-930,-569) translate(257,26) matrix(1,0,0,1,0,0)"><g><path fill="none" stroke="#000000" d="M 677.5 547.5 L 677.5 558.75 Q 677.5 568.75 687.5 568.75 L 700 568.75 Q 710 568.75 710 578.75 L 710 590" stroke-miterlimit="10" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+</g>
+</svg>
+
+<div class="tooltiptext" id="node0tip">
+	<form id="node0form">
+		<table style="border:0">
+		<caption>Low risk surgery:</caption>
+		<tr>
+		<th>Yes</th>
+		<th>&nbsp;</th>
+		</tr>
+		<tr>
+			<td><input type="radio" id="lowrisksurgery1" class="lowrisksurgery" name="lowrisksurgery"/></td>
+			<td><label for="lowrisksurgery1">Minor dental (including "tooth extractions and endodontic (root canal) procedures")?</label></td>
+		</tr>
+		<tr>
+			<td><input type="radio" id="lowrisksurgery2" class="lowrisksurgery" name="lowrisksurgery"/></td>
+			<td><label for="lowrisksurgery2">Dermatologic (including "excision of basal and squamous cell skin cancers, actinic keratoses, and premalignant or cancerous skin nevi".)?</label></td>
+		</tr>
+		<tr>
+			<td><input type="radio" id="lowrisksurgery3" class="lowrisksurgery" name="lowrisksurgery"/></td>
+			<td><label for="lowrisksurgery3">Cataract?</label></td>
+		</tr>
+		<tr>
+			<td><input type="radio" id="lowrisksurgery4" class="lowrisksurgery" name="lowrisksurgery"/></td>
+			<td><label for="lowrisksurgery4">No</label></td>
+		</tr>
+		</table>
+		<script>
+			function node0function(){
+			printoutput();
+			};
+		</script>
+		<button type="button" id="submit0" onClick="node0function()">Submit</button>
+    </form>
+</div>
+<div class="tooltiptext" id="node1tip">
+	<form id="node1form">
+		<table style="border:0">
+		<caption>Indication for VKA Therapy:</caption>
+		<tr>
+		<th>&nbsp;</th>
+		<th>Mechanical Valve</th>
+		<th>A-fib</th>
+		<th>VTE</th>
+		</tr>
+		<tr>
+			<th><label for="te1">High<br/><input type="radio" name="te" id="te1" class="te" value="1"/></label></th>
+			<td>Any mitral valve prosthesis<br/>Any caged-ball or tilting disc aortic valve prosthesis<br/>Recent (within 6 mo) stroke or transient ischemic attack</td>
+			<td><a target=_blank href="http://www.wikidoc.org/index.php/CHADS2">CHADS2</a> score of 5 or 6<br/>Recent (within 3 mo) stroke or transient ischemic attack<br/>Rheumatic valvular heart disease</td>
+			<td>VTE within 3 mo<br/><br/>Severe thrombophilia (eg, deficiency of protein C, protein S, or antithrombin; antiphospholipid antibodies; multiple abnormalities)</td>
+		</tr>
+		<tr>
+			<th><label for="te2">Moderate<br/><input type="radio" name="te" id="te2" class="te" value="1"/></label></th>
+			<td>Bileaflet aortic valve prosthesis and one or more of the of following risk factors: atrial fibrillation, prior stroke or transient ischemic attack, hypertension, diabetes, congestive heart failure, age > 75 y</td>
+			<td><a target=_blank href="http://www.wikidoc.org/index.php/CHADS2">CHADS2</a> score of 3 or 4</td>
+			<td>VTE within the past 3-12 mo<br/><br/>Nonsevere thrombophilia (eg, heterozygous factor V Leiden or prothrombin gene mutation)<br/>Recurrent VTE<br/>Active cancer (treated within 6 mo or palliative)</td>
+		</tr>
+		<tr>
+			<th><label for="te3">Low<br/><input type="radio" name="te" id="te3" class="te" value="1"/></label></th>
+			<td>Bileaflet aortic valve prosthesis without atrial fibrillation and no other risk factors for stroke</td>
+			<td><a target=_blank href="http://www.wikidoc.org/index.php/CHADS2">CHADS2</a> score of 0 to 2 (assuming no prior stroke or transient ischemic attack)</td>
+			<td>VTE > 12 mo previous and no other risk factors</td>
+		</tr>
+		<tr><td colspan=4>"High-risk patients may also include those with a prior stroke or transient ischemic attack occurring > 3 mo before the planned surgery and a CHADS2 score &lt; 5, those with prior thromboembolism during temporary interruption of VKAs, or those undergoing certain types of surgery associated with an increased risk for stroke or other thromboembolism (eg, cardiac valve replacement, carotid endarterectomy, major vascular surgery)."</td></tr>
+		</table>
+		<script>
+			function node1function(){
+			$(".te:visible").each(function() {
+				if (this.checked) {
+					}
+			});
+			printoutput();
+			};
+		</script>
+		<button type="button" id="submit1" onClick="node1function()">Submit</button>
+    </form>
+		<!--<div style="text-align:center"><a href="#" target=_blank>More information</a></div>-->
+</div>
+<div style="float:right;color:#0022B4;width:550px" id="rightcol">
+<h2>Proposed text to place and edit in the electronic health record</h2>
+<div onFocus="this.select()" id="output" style="border:3px;border-color:#0022B4;border-style: solid;padding:10px;">
+Proposed text will be here.
+</div>
+<div><a href="periprocedure%20anticoagulation%20calendar.html">Print calendar with instructions for medications</a></div>
+<h2>Additional considerations for this patient</h2>
+<div>Revise recommendations above based on these and other considerations.</div>
+<div onFocus="this.select()" id="considerations" style="border:3px;border-color:#0022B4;border-style: solid;padding:10px">
+Pending.
+</div>
+
+<!-- Start of hidden fields -->
+<div id="recommendationssource" style="display:none">
+<div>I recommend:</div>
+<div>1.  </div>
+<div>2.  </div>
+<div>3.  </div>
+<div>4.  </div>
+<div>5.  </div>
+<div>6.  </div>
+<div>7.  </div>
+</div>
+
+<div id="rationalesource" style="display:none">
+<div>The risk of bleeding is: bleedrisk<span style="color:rgba( 0, 34, 180,0.5)"></span>.</div>
+<div>The risk of thromboembolism: terisk.</div>
+</div>
+
+<div id="considerationssource" style="display:none">
+<!--lowrisksurgery-->
+</div>
+<!-- End of hidden fields -->
+
+</div>
+</div>
+</div>
+</td></tr>
+</table>
+<div style="clear:both">
+
+<h2 style="color:#0022B4">References</h2>
+<h3>American College of Cardiology/American Heart Association Guidelines</h3>
+<ol>
+<li>1: Douketis JD et al; American College of Chest Physicians. Perioperative management of antithrombotic therapy: Antithrombotic Therapy and Prevention of Thrombosis, 9th ed: American College of Chest Physicians Evidence-Based Clinical Practice Guidelines. Chest. 2012. PMID: <a href="http://pubmed.gov/22315266">22315266</a> PMCID: <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3278059/">PMC3278059</a>.</li>
+</ol>
+<h3>Other</h3>
+<ol>
+<li></li>
+</ol>
+</div>
+</body>
+</html>
