@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Anticoagulation calendar for procedures</title>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+<link rel="stylesheet" href="/resources/demos/style.css">
+<script>
+$(document).ready(function(){
+$(function() {
+	$("#datepicker").datepicker({
+	onSelect: function (dateText, inst) {
+	makecalendar()
+	}
+});
+
+$("#bridgeno").click(function(){
+	makecalendar()
+  });
+
+$("#holdno").click(function(){
+	makecalendar()
+  });
+
+  $("#tranexamic_acid").click(function(){
+	makecalendar()
+  });
+
+$("#stop3").click(function(){
+	makecalendar()
+  });
+
+})
+});
+
+function makecalendar(){
+	//Clear calendar
+	for ( var i = 1; i < 22; i++ ) {
+		$("#d" + i).html("&nbsp;");
+		$("#a" + i).val("");
+		}
+	//Start populating calendar
+    var dateOfProcedure = $("#datepicker").datepicker('getDate');
+	var dateLabel = new Date();
+	var dayLabel;
+    var dayOfMonth = dateOfProcedure.getDate();
+    var dayOfProcedure = dateOfProcedure.getUTCDay() + 8;
+	$("#a" + dayOfProcedure).val("Resume warfarin tonite if ok with your surgeon.");
+	if ($("#bridgeno").is(':checked'))
+		{
+		//no bridge
+		if (!$("#holdno").is(':checked'))
+			{
+			if ($("#stop3").is(':checked'))
+				{
+				$("#a" + eval(dayOfProcedure - 3)).val("Last warfarin");
+				}
+			else
+				{
+				$("#a" + eval(dayOfProcedure - 5)).val("Last warfarin");
+				$("#a" + eval(dayOfProcedure - 1)).val("INR check");
+				$("#a" + eval(dayOfProcedure + 3)).val("INR check");
+				}
+			}
+		}
+	else
+		{
+		//bridge
+		if (!$("#holdno").is(':checked'))
+			{
+			if ($("#stop3").is(':checked'))
+				{
+				$("#a" + eval(dayOfProcedure - 3)).val("Last warfarin");
+				//$("#bridgeno").prop( "checked", true )
+				//alert('Are you sure you want to both bridge and stop warfarin for 3 days?');
+				}
+			else
+				{
+				$("#a" + eval(dayOfProcedure - 5)).val("Last warfarin");
+				$("#a" + eval(dayOfProcedure - 3)).val("Start injections");
+				$("#a" + eval(dayOfProcedure - 1)).val("Last injection is this morning\n\nINR check");
+				$("#a" + eval(dayOfProcedure + 1)).val("Restart injections if ok with your surgeon.");
+				$("#a" + eval(dayOfProcedure + 3)).val("INR check\n\nAsk our office when to stop injections");
+				}
+			}
+		}
+	for ( var i = -14; i < 14; i++ ) {
+		dateLabel.setDate(dateOfProcedure.getDate() + i);
+		dayLabel = dateLabel.getDate();
+		$("#d" + eval(dayOfProcedure + i)).html(dayLabel);
+		}
+	$("#pt_instructions").html("");
+	if ($("#tranexamic_acid").is(':checked'))
+		{
+		$("#pt_instructions").html("The healthcare provider performing your procedure may use an oral rinse to decrease bleeding. <ul><li>It is given as one teaspoon (5 ml) oral rinse, 5 to 10 min before the dental procedure and 3 to 4 times daily for 1 to 2 days after the procedure. </li><li>Hold 10 mL in mouth and rinse for 2 minutes then spit out. </li><li>Do not eat or drink for 1 hour after using oral rinse. <l/i><li>Minor bleeding (or oozing from gingival mucosa) may occur. Continue tranexamic acid use and apply local pressure to stop such bleeding.</li></ul>");
+		}
+	$("#d" + eval(dayOfProcedure)).html("<span style=\"color:red;float:left\">Procedure</span><span style=\"color:red;float:right;\">" + dayOfMonth + "</span>");
+}
+</script>
+<style>
+.wrapper
+{
+  width: 860px;
+  margin-top: 0px;
+  margin-right: auto;
+  margin-bottom: 0px;
+  margin-left: auto;
+}
+.weekend
+	{
+	background-color:#C0C0C0
+	}
+.label
+	{
+	text-align:right;
+	font-weight:bold;
+	font-size:16px;
+	}
+hr
+	{
+	opacity:0;
+	margin-top: 0em;
+	margin-bottom: 0em;
+	border-width: 0px;
+	clear: both;
+	}
+textarea
+	{
+	width:100px;
+	height:100px;
+	overflow:auto;
+	resize:yes;
+	}
+
+@media print {
+    .instructions {
+		 display:none;
+		}
+	 spacer{
+		 display:block;
+		 }
+	.weekend
+		{
+		background-color:#C0C0C0;
+		box-shadow: inset 0 0 0 1000px #C0C0C0;
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+		}
+	}
+@media screen {
+ 	 .spacer{
+	 display:none;
+	}
+}
+</style>
+</head>
+<body>
+<div class="wrapper">
+<script>
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+var site = getParameterByName('site');
+if (site.length>0)
+{
+document.write("<img src=\"images/site/" + site + ".png\" style=\"display: block;margin-left: auto; margin-right: auto;\" />")
+}
+</script>
+<h2>Calendar for anticoagulation around your procedure</h2>
+<p>Date of procedure/surgery: <input type="text" id="datepicker"></p>
+<p>Your name: <input type="text" id="yourname" placeholder="type over this text before printing" style="width:200px"></p>
+<div style="background-color:#E4E4E4; width:775px;padding:1px 5px 1px 5px" class="instructions">
+<p>Health care staff (these instructions in light gray will not be printed):</p>
+<p style="margin-left: 10px">Type in pt name then edit and move text as needed before printing.</p>
+<p style="margin-left: 10px"><input type="checkbox" id="bridgeno"/><label for="bridgeno">Don't bridge</label>&nbsp;<input type="checkbox" id="holdno"/><label for="bridgeno">Don't hold warfarin</label></p>
+<p style="margin-left: 10px"><input type="checkbox" id="tranexamic_acid"/><label for="tranexamic_acid">Show tranexamic acid instructions?</label>&nbsp;<input type="checkbox" id="stop3"/><label for="stop3">Stop warfarin for three days and no bridge - for minor dental procedures including "tooth extractions and endodontic (root canal)",</label></p>
+<p style="margin-left: 10px"><a href="javascript:window.print()">Print</a></p>
+</div>
+<div>&nbsp;</div>
+<table style="border-width: 1px; border-style: outset;width:775px">
+<tr><th>Sunday</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th><th>Saturday</th></tr>
+<tr><td class="weekend"><div id="d1" class="weekend">&nbsp;</div><hr/><textarea id="a1"  class="weekend"></textarea></td><td><div id="d2"  class="label">&nbsp;</div><hr/><textarea id="a2" ></textarea></td><td><div id="d3"  class="label">&nbsp;</div><hr/><textarea id="a3" ></textarea></td><td><div id="d4"  class="label">&nbsp;</div><hr/><textarea id="a4" ></textarea></td><td><div id="d5"  class="label">&nbsp;</div><hr/><textarea id="a5" ></textarea></td><td><div id="d6"  class="label">&nbsp;</div><hr/><textarea id="a6" ></textarea></td><td class="weekend"><div id="d7"  class="weekend">&nbsp;</div><hr/><textarea id="a7"  class="weekend"></textarea></td></tr>
+<tr><td class="weekend"><div id="d8"  class="weekend">&nbsp;</div><hr/><textarea id="a8"  class="weekend"></textarea></td><td><div id="d9"  class="label">&nbsp;</div><hr/><textarea id="a9" ></textarea></td><td><div id="d10" class="label">&nbsp;</div><hr/><textarea id="a10"></textarea></td><td><div id="d11" class="label">&nbsp;</div><hr/><textarea id="a11"></textarea></td><td><div id="d12" class="label">&nbsp;</div><hr/><textarea id="a12"></textarea></td><td><div id="d13" class="label">&nbsp;</div><hr/><textarea id="a13"></textarea></td><td class="weekend"><div id="d14" class="weekend">&nbsp;</div><hr/><textarea id="a14" class="weekend"></textarea></td></tr>
+<tr><td class="weekend"><div id="d15" class="weekend">&nbsp;</div><hr/><textarea id="a15" class="weekend"></textarea></td><td><div id="d16" class="label">&nbsp;</div><hr/><textarea id="a16"></textarea></td><td><div id="d17" class="label">&nbsp;</div><hr/><textarea id="a17"></textarea></td><td><div id="d18" class="label">&nbsp;</div><hr/><textarea id="a18"></textarea></td><td><div id="d19" class="label">&nbsp;</div><hr/><textarea id="a19"></textarea></td><td><div id="d20" class="label">&nbsp;</div><hr/><textarea id="a20"></textarea></td><td class="weekend"><div id="d21" class="weekend">&nbsp;</div><hr/><textarea id="a21" class="weekend"></textarea></td></tr>
+</table>
+<p>&nbsp;</p>
+<div id="pt_instructions">&nbsp;</div>
+<p>Developed by:
+<p><a href="http://wichita.kumc.edu/php">Population Health in Practice</a><br/>Kansas University School of Medicine - Wichita</p>
+<p class="instructions">Based on ACCP 2012 Guidelines</p>
+<ol class="instructions">
+<li>Douketis JD et al; American College of Chest Physicians. Perioperative management of antithrombotic therapy: Antithrombotic Therapy and Prevention of Thrombosis, 9th ed: American College of Chest Physicians Evidence-Based Clinical Practice Guidelines. Chest. 2012. PMID: <a href="http://pubmed.gov/22315266">22315266</a> PMCID: <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3278059/">PMC3278059</a>.</li>
+</ol>
+</div>
+</body>
+</html>
