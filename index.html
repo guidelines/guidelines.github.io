@@ -51,7 +51,9 @@
 <script>
 //For gh-pages
 //Page history and edit
-document.write("<div style='text-align:center'><a href='https://github.com/openMetaAnalysis/openMetaAnalysis.github.io/blob/master/" + location.pathname.split('/').slice(-1) + "'>Edit this page</a> - <a href='https://github.com/openMetaAnalysis/openMetaAnalysis.github.io/commits/master/" + location.pathname.split('/').slice(-1) + "'>Page history</a></div>")
+var pagename = location.pathname.split('/').slice(-1);
+if (pagename.length < 1){pagename = "index.html"}
+document.write("<div style='text-align:center'><a href='https://github.com/openMetaAnalysis/openMetaAnalysis.github.io/blob/master/" + pagename + "'>Edit this page</a> - <a href='https://github.com/openMetaAnalysis/openMetaAnalysis.github.io/commits/master/" + pagename + "'>Page history</a></div>")
 </script>
 
     </div>
