@@ -161,42 +161,51 @@
 	
     </script>
     
-    <style>
-		th {
-			background-color:#6DC6E7;
-			color:#0022B4;
-			border:0px;
-			spacing:5px;
-			text-align:center;
-			vertical-align: middle;
-		}
-		td{
-			vertical-align:top;
-			padding:5px;
-			spacing:0px;
-		}
-		table{
-			border:0px;
-		}
-		caption{
-		font-size:20px;
-		font-weight:bold;
-		}
-	  .tooltiptext{
-			display: none;
-		}
-	  .ToolTipClass{
+	<style>
+	
+	.wrapper
+	{
+	  width: 860px;
+	  margin-top: 0px;
+	  margin-right: auto;
+	  margin-bottom: 0px;
+	  margin-left: auto;
+	}
+	th {
+		background-color:#6DC6E7;
+		color:#0022B4;
+		border:0px;
+		spacing:5px;
+		text-align:center;
+		vertical-align: middle;
+	}
+	td{
+		vertical-align:top;
+		padding:5px;
+		spacing:0px;
+	}
+	table{
+		border:0px;
+	}
+	caption{
+	font-size:20px;
+	font-weight:bold;
+	}
+	.tooltiptext{
+		display: none;
+	}
+	.ToolTipClass{
 		color:#0022B4;
 		border-width: 3px;
 		border-color: #0022B4;
 		background-color: white;
 		max-width: 600px;
-		}
+	}
     </style>
 	
 </head>
 <body>
-
+<div class="wrapper">
 <h1>2012 ACCP Periprocedure anticoagulation gudelines</h1>
 <h2 style="color:#0022B4">Instructions</h2>
 <table style="border:0;width:1600">
@@ -607,10 +616,28 @@ Pending.
 <ol>
 <li>1: Douketis JD et al; American College of Chest Physicians. Perioperative management of antithrombotic therapy: Antithrombotic Therapy and Prevention of Thrombosis, 9th ed: American College of Chest Physicians Evidence-Based Clinical Practice Guidelines. Chest. 2012. PMID: <a href="http://pubmed.gov/22315266">22315266</a> PMCID: <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3278059/">PMC3278059</a>.</li>
 </ol>
-<h3>Other</h3>
-<ol>
-<li></li>
-</ol>
 </div>
+<script>
+//For gh-pages
+//Page history and edit
+var pagename = location.pathname.split('/').slice(-1);
+if (pagename.toString().length < 1){pagename = "index.html"}
+document.write("<div style='text-align:center'><a href='https://github.com/guidelines/guidelines.github.io/blob/master/anticoagulation/" + pagename + "'>Edit this page</a> - <a href='https://github.com/guidelines/guidelines.github.io/commits/master/anticoagulation/" + pagename + "'>Page history</a></div>")
+</script>
+
+</div>
+    <script src="javascripts/scale.fix.js"></script>
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-56740469-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+</body>
+</html>
 </body>
 </html>
