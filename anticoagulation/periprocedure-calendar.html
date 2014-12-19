@@ -3,10 +3,18 @@
 <head>
 <meta charset="utf-8">
 <title>Anticoagulation calendar for procedures</title>
-<link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+ <link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
 <script src="//code.jquery.com/jquery-1.10.2.js"></script>
 <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+<link rel="stylesheet" href="/resources/demos/style.css">
 <script>
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+var site = getParameterByName('site').toLowerCase();
 $(document).ready(function(){
 $(function() {
 	$("#datepicker").datepicker({
@@ -14,7 +22,12 @@ $(function() {
 	makecalendar()
 	}
 });
-
+//Site defaults
+if (site == "heartland"){
+	$("#INRdaybefore_no").attr("checked", "checked");
+	$("#bridgeno").attr("checked", "checked");
+	}
+//Event handlers
 $("#bridgeno").click(function(){
 	makecalendar()
   });
@@ -30,7 +43,9 @@ $("#holdno").click(function(){
 $("#stop3").click(function(){
 	makecalendar()
   });
-
+$("#INRdaybefore_no").click(function(){
+	makecalendar()
+  });
 })
 });
 
@@ -59,8 +74,6 @@ function makecalendar(){
 			else
 				{
 				$("#a" + eval(dayOfProcedure - 5)).val("Last warfarin");
-				$("#a" + eval(dayOfProcedure - 1)).val("INR check");
-				$("#a" + eval(dayOfProcedure + 3)).val("INR check");
 				}
 			}
 		}
@@ -71,20 +84,28 @@ function makecalendar(){
 			{
 			if ($("#stop3").is(':checked'))
 				{
+				//Stop 3 days before
 				$("#a" + eval(dayOfProcedure - 3)).val("Last warfarin");
 				//$("#bridgeno").prop( "checked", true )
 				//alert('Are you sure you want to both bridge and stop warfarin for 3 days?');
 				}
 			else
 				{
+				//Stop 5 days before
 				$("#a" + eval(dayOfProcedure - 5)).val("Last warfarin");
 				$("#a" + eval(dayOfProcedure - 3)).val("Start injections");
-				$("#a" + eval(dayOfProcedure - 1)).val("Last injection is this morning\n\nINR check");
+				$("#a" + eval(dayOfProcedure - 1)).val("Last injection is this morning\n\n");
 				$("#a" + eval(dayOfProcedure + 1)).val("Restart injections if ok with your surgeon.");
-				$("#a" + eval(dayOfProcedure + 3)).val("INR check\n\nAsk our office when to stop injections");
+				$("#a" + eval(dayOfProcedure + 3)).val("\n\nAsk our office when to stop injections");
 				}
 			}
 		}
+	//INR checks
+	if (!$("#INRdaybefore_no").is(':checked')){
+		$("#a" + eval(dayOfProcedure - 1)).val("INR check");
+	}
+	$("#a" + eval(dayOfProcedure + 3)).val("INR check" + $("#a" + eval(dayOfProcedure + 3)).val());
+	
 	for ( var i = -14; i < 14; i++ ) {
 		dateLabel.setDate(dateOfProcedure.getDate() + i);
 		dayLabel = dateLabel.getDate();
@@ -158,16 +179,9 @@ textarea
 <body>
 <div class="wrapper">
 <script>
-function getParameterByName(name) {
-    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-        results = regex.exec(location.search);
-    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-}
-var site = getParameterByName('site');
 if (site.length>0)
 {
-document.write("<img src=\"/images/sites/" + site + ".png\" style=\"display: block;margin-left: auto; margin-right: auto;\" />")
+document.write("<img src=\"images/" + site + ".png\" style=\"display: block;margin-left: auto; margin-right: auto;\" />")
 }
 </script>
 <h2>Calendar for anticoagulation around your procedure</h2>
@@ -175,8 +189,8 @@ document.write("<img src=\"/images/sites/" + site + ".png\" style=\"display: blo
 <p>Your name: <input type="text" id="yourname" placeholder="type over this text before printing" style="width:200px"></p>
 <div style="background-color:#E4E4E4; width:775px;padding:1px 5px 1px 5px" class="instructions">
 <p>Health care staff (these instructions in light gray will not be printed):</p>
-<p style="margin-left: 10px">Type in pt name then edit and move text as needed before printing.</p>
-<p style="margin-left: 10px"><input type="checkbox" id="bridgeno"/><label for="bridgeno">Don't bridge</label>&nbsp;<input type="checkbox" id="holdno"/><label for="bridgeno">Don't hold warfarin</label></p>
+<p style="margin-left: 10px">Type in pt name then edit and move text away from weekends if needed before printing.</p>
+<p style="margin-left: 10px"><input type="checkbox" id="bridgeno"/><label for="bridgeno">Don't bridge</label>&nbsp;<input type="checkbox" id="holdno"/><label for="bridgeno">Don't hold warfarin</label>&nbsp;<input type="checkbox" id="INRdaybefore_no"/><label for="INRdaybefore_no">Don't check INR day before procedure</label></p>
 <p style="margin-left: 10px"><input type="checkbox" id="tranexamic_acid"/><label for="tranexamic_acid">Show tranexamic acid instructions?</label>&nbsp;<input type="checkbox" id="stop3"/><label for="stop3">Stop warfarin for three days and no bridge - for minor dental procedures including "tooth extractions and endodontic (root canal)",</label></p>
 <p style="margin-left: 10px"><a href="javascript:window.print()">Print</a></p>
 </div>
@@ -189,8 +203,9 @@ document.write("<img src=\"/images/sites/" + site + ".png\" style=\"display: blo
 </table>
 <p>&nbsp;</p>
 <div id="pt_instructions">&nbsp;</div>
-<p>Developed by:
+<!--<p>Developed by:
 <p><a href="http://wichita.kumc.edu/php">Population Health in Practice</a><br/>Kansas University School of Medicine - Wichita</p>
+-->
 <p class="instructions">Based on ACCP 2012 Guidelines</p>
 <ol class="instructions">
 <li>Douketis JD et al; American College of Chest Physicians. Perioperative management of antithrombotic therapy: Antithrombotic Therapy and Prevention of Thrombosis, 9th ed: American College of Chest Physicians Evidence-Based Clinical Practice Guidelines. Chest. 2012. PMID: <a href="http://pubmed.gov/22315266">22315266</a> PMCID: <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3278059/">PMC3278059</a>.</li>
