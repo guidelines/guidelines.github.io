@@ -5,16 +5,17 @@
 <title>2012 ACCP Periprocedure anticoagulation guidelines</title>
 
 <!-- jquery -->
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
 <!-- tooltip -->
-<script type="text/javascript" src="/qtip/jquery.qtip.min.js"></script>
+<script src="qtip/jquery.qtip.min.js"></script>
 
-<link rel="stylesheet" type="text/css" href="/qtip/jquery.qtip.min.css" />
+<link rel="stylesheet" type="text/css" href="qtip/jquery.qtip.min.css" />
 <script>
 	var rcriscore = -1;
 	var estMETs = -1;
-	var lowrisk = 0;
+	var bleedingrisk = 0;
 	function printoutput(){
+		var calendarlink = "periprocedure-calendar.html?"
 		var recommendationtext = $("#recommendationssource").html();
 		var rationaletext = $("#rationalesource").html()
 		var considerationstext =  $("#considerationssource").html();
@@ -27,42 +28,51 @@
 		$("#nobridgingtip").hide();
 		$("#output").css('background','rgba(0,191,2,0)')
 		$("#considerations").css('background','rgba(0,191,2,0)')
-		$(".lowrisksurgery").each(function() {
-			if (this.checked) { 
-				lowrisk = 1;
-				if($(this).attr("id") == "lowrisksurgery1")
+		$(".bleedingrisksurgery").each(function() {
+			if (this.checked) {
+				bleedingrisk = 0;
+				if($(this).attr("id") == "lowrisksurgery1_dental")
 					{
-					recommendationtext = recommendationtext.replace('1.  ', '1. Continue warfarin with oral prohemostatic agent -OR- Stop warfarin 2-3 days prior to sprocedure. (Rec 2.5 of ACCP 2012 Guidelines).')
+					recommendationtext = recommendationtext.replace('1.  ', '1. Continue warfarin with oral prohemostatic agent -OR- Stop warfarin 2-3 days prior to procedure. (Rec 2.5).')
 					rationaletext = rationaletext.replace('bleedrisk', '< 5% risk for clinically relevant nonmajor bleeding if warfarin is continued')
 					rationaletext = rationaletext.replace('terisk', '< 0.1% if warfarin is continued')
-					considerationstext = considerationstext.replace('<!--lowrisksurgery-->', '<div>&bull; If warfarin is not stopped, \"minor bleeding (or oozing from gingival mucosa) may be more common...continue tranexamic acid use and to apply local pressure to stop such bleeding...If tranexamic acid is used, it is given as a 5-mL oral dose, 5 to 10 min before the dental procedure and 3 to 4 times daily for 1 to 2 days after the procedure.\" (Rec 2.5 of <a href=\"http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3278059/\">ACCP 2012 Guideline</a>).</div>')
+					considerationstext = considerationstext.replace('<!--lowrisksurgery-->', '<div>&bull; If warfarin is not stopped, \"minor bleeding (or oozing from gingival mucosa) may be more common...continue tranexamic acid use and to apply local pressure to stop such bleeding...If tranexamic acid is used, it is given as a 5-mL oral dose, 5 to 10 min before the dental procedure and 3 to 4 times daily for 1 to 2 days after the procedure.\" (Rec 2.5 of <a href=\"http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3278059/#__sec5title\">ACCP 2012 Guideline</a>).</div>')
+					calendarlink += "dental=1&";
+					calendarlink += "holdno=1&";
 					$("#minordentaltip").show();
 					}
-				if($(this).attr("id") == "lowrisksurgery2")
+				if($(this).attr("id") == "lowrisksurgery2_derm")
 					{
-					recommendationtext = recommendationtext.replace('1.  ', '1. Continue warfarin and optimize local hemostasis. (Rec 2.5 of ACCP 2012 Guidelines).')
+					recommendationtext = recommendationtext.replace('1.  ', '1. Continue warfarin and optimize local hemostasis. (Rec 2.5).')
 					rationaletext = rationaletext.replace('bleedrisk', '< 5% risk for \'major bleeding\'')
 					rationaletext = rationaletext.replace('terisk', 'not stated in guidelines')
 					considerationstext = considerationstext.replace('<!--lowrisksurgery-->', '<div>&bull; No additional considerations</div>')
+					calendarlink += "holdno=1&";
 					$("#minordermtip").show();
 					}
-				if($(this).attr("id") == "lowrisksurgery3")
+				if($(this).attr("id") == "lowrisksurgery3_eye")
 					{
-					recommendationtext = recommendationtext.replace('1.  ', '1. Continue warfarin. (Rec 2.5 of ACCP 2012 Guidelines).')
+					recommendationtext = recommendationtext.replace('1.  ', '1. Continue warfarin. (Rec 2.5).')
 					rationaletext = rationaletext.replace('bleedrisk', '< 3% risk for \'clinically important bleeding\' and 10% overall incidence of bleeding such as dot hyphemias or subconjunctival bleeds without compromised visual acuity related to bleeding')
 					rationaletext = rationaletext.replace('terisk', 'low (1%-2%) incidence of ATE if bridging occurs')
 					considerationstext = considerationstext.replace('<!--lowrisksurgery-->', '')
+					calendarlink += "holdno=1&";
 					$("#cataracttip").show();
 					}
-				if($(this).attr("id") == "lowrisksurgery4")
+				if($(this).attr("id") == "intermediaterisksurgery")
 					{
-					lowrisk = 0;
+					bleedingrisk = 1;
 					$("#terisk").show();
 					}
+				if($(this).attr("id") == "highrisksurgery")
+					{
+					bleedingrisk = 2;
+					$("#terisk").show();
+					}
+				calendarlink += "bleedingrisk=" + bleedingrisk + "&";
 				}
 		});
-		if (lowrisk == 1)
-			{
+		if (bleedingrisk == 0){
 			$("#terisk").hide();
 			recommendationtext = recommendationtext.replace('2.  ', '')
 			recommendationtext = recommendationtext.replace('3.  ', '')
@@ -70,16 +80,15 @@
 			recommendationtext = recommendationtext.replace('5.  ', '')
 			recommendationtext = recommendationtext.replace('6.  ', '')
 			recommendationtext = recommendationtext.replace('7.  ', '')
+			calendarlink += "bridge=0&";
 			}
-		if (lowrisk == 0)
-			{
-			recommendationtext = recommendationtext.replace('1.  ', '1. Stop warfarin 5 days prior to procedure. (Rec 2.5 of ACCP 2012 Guidelines).')
-			recommendationtext = recommendationtext.replace('2.  ', '2. Check INR the day before prcedure. 7% of patients will have INR > 1.5. If so, give \'low-dose (1 mg) oral vitamin K\'. (Suggested in 2.5 of ACCP 2012 Guidelines)')
+		if (bleedingrisk> 0){
+			recommendationtext = recommendationtext.replace('1.  ', '1. Stop warfarin 5 days prior to procedure. (Rec 2.5).')
+			recommendationtext = recommendationtext.replace('2.  ', '2. Check INR the day before procedure. 7% of patients will have INR > 1.5. If so, give \'low-dose (1 mg) oral vitamin K\'. (Suggested in Rec 2.5)')
 			$(".te").each(function() {
 				if (this.checked) { 
-					if($(this).attr("id") == "te3")
-						{
-						recommendationtext = recommendationtext.replace('3.  ', '3. No bridging. (Rec 2.4 of ACCP 2012 Guidelines).')
+					if($(this).attr("id") == "te3"){
+						recommendationtext = recommendationtext.replace('3.  ', '3. No bridging. (Rec 2.4).')
 						recommendationtext = recommendationtext.replace('4.  ', '')
 						recommendationtext = recommendationtext.replace('5.  ', '')
 						recommendationtext = recommendationtext.replace('6.  ', '')
@@ -88,29 +97,40 @@
 						rationaletext = rationaletext.replace('terisk', 'very low (< 1%)')
 						considerationstext = considerationstext.replace('<!--lowrisksurgery-->', '')
 						$("#nobridgingtip").show();
+						calendarlink += "bridge=0&";
 						}
-					if($(this).attr("id") == "te2")
-						{
-						recommendationtext = recommendationtext.replace('3.  ', '3. \'Bridging or no-bridging...based on an assessment of individual patient- and surgery-related factors\'. (Rec 2.4 of ACCP 2012 Guidelines).<div>&nbsp;</div><div>If bridging is done:</div>')
-						recommendationtext = recommendationtext.replace('4.  ', '1. Administer \'the last preoperative dose of LMWH approximately 24 h before surgery\'. (Rec 4.3 of ACCP 2012 Guidelines).')
-						recommendationtext = recommendationtext.replace('5.  ', '2. Resume warfarin \'approximately 12 to 24 h after surgery (evening of or next morning) and when there is adequate hemostasis\'. (Rec 2.2 of ACCP 2012 Guidelines)')
-						recommendationtext = recommendationtext.replace('6.  ', '3. Resume \'therapeutic-dose LMWH 24 h after surgery\' or \'48 to 72 h after surgery\' if \'high-bleeding-risk surgery\'. (Rec 4.4 of ACCP 2012 Guidelines)')
-						recommendationtext = recommendationtext.replace('7.  ', '4. Check INR at 3-5 days after surgery\'. (Suggested in ACCP rec 2.2)')
+					if($(this).attr("id") == "te2"){
+						recommendationtext = recommendationtext.replace('3.  ', '3. \'Bridging or no-bridging...based on an assessment of individual patient- and surgery-related factors\'. (Rec 2.4).<div>&nbsp;</div><div>If bridging is done:</div>')
+						recommendationtext = recommendationtext.replace('4.  ', '1. Administer \'the last preoperative dose of LMWH approximately 24 h before surgery\'. (Rec 4.3).')
+						recommendationtext = recommendationtext.replace('5.  ', '2. Resume warfarin \'approximately 12 to 24 h after surgery (evening of or next morning) and when there is adequate hemostasis\'. (Rec 2.2)')
+						if (bleedingrisk == 2){
+							recommendationtext = recommendationtext.replace('6.  ', '3. Resume therapeutic-dose LMWH \'48 to 72 h after surgery\' as \'high-bleeding-risk surgery\'. (Rec 4.4)')
+							}
+						else{
+							recommendationtext = recommendationtext.replace('6.  ', '3. Resume therapeutic-dose LMWH \'24 h after surgery\' as not \'high-bleeding-risk surgery\'. (Rec 4.4)')
+							}
+						recommendationtext = recommendationtext.replace('7.  ', '4. Check INR at 3-5 days after surgery\'. (Suggested in Rec 2.2)')
 						rationaletext = rationaletext.replace('bleedrisk', 'Not stated in guidelines')
-						rationaletext = rationaletext.replace('terisk', '~1%, \'irrespective of the management strategy used\'')
-						considerationstext = considerationstext.replace('<!--lowrisksurgery-->', '<div>&bull; \" Therapeutic-dose LMWH is...(Rec 2.5 of <a href=\"http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3278059/\">ACCP 2012 Guideline</a>).</div>')
+						rationaletext = rationaletext.replace('terisk', '~1%')
+						considerationstext = considerationstext.replace('<!--lowrisksurgery-->', '<div>&bull; Therapeutic-dose LMWH is \'enoxaparin 1 mg/kg bid or 1.5 mg/kg daily, dalteparin 100 International Units/kg bid or 200 International Units/kg daily, tinzaparin 175 International Units/kg daily\'(See definitions at start of <a href=\"http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3278059/#__sec5title\">ACCP 2012 Guideline</a>).</div>')
+						calendarlink += "bridge=1&";
 						$("#maybebridgingtip").show();
 						}
-					if($(this).attr("id") == "te1")
-						{
-						recommendationtext = recommendationtext.replace('3.  ', '3. Bridging with therapeutic dose of LMWH. (ACCP rec 2.4).')
-						recommendationtext = recommendationtext.replace('4.  ', '4. Administer \'the last preoperative dose of LMWH approximately 24 h before surgery\'. (Rec 4.3 of ACCP 2012 Guidelines).')
-						recommendationtext = recommendationtext.replace('5.  ', '5. Resume warfarin \'approximately 12 to 24 h after surgery (evening of or next morning) and when there is adequate hemostasis\'. (ACCP rec 2.2)')
-						recommendationtext = recommendationtext.replace('6.  ', '6. Resume \'therapeutic-dose LMWH 24 h after surgery\' or \'48 to 72 h after surgery\' if \'high-bleeding-risk surgery\'. (ACCP rec 4.4)')
-						recommendationtext = recommendationtext.replace('7.  ', '7. Check INR at 5 days fter surgery\'. (Suggested in ACCP rec 2.2)')
+					if($(this).attr("id") == "te1"){
+						recommendationtext = recommendationtext.replace('3.  ', '3. Bridge with therapeutic dose of LMWH. (Rec 2.4).')
+						recommendationtext = recommendationtext.replace('4.  ', '4. Administer \'the last preoperative dose of LMWH approximately 24 h before surgery\'. (Rec 4.3).')
+						recommendationtext = recommendationtext.replace('5.  ', '5. Resume warfarin \'approximately 12 to 24 h after surgery (evening of or next morning) and when there is adequate hemostasis\'. (Rec 2.2)')
+						if (bleedingrisk == 2){
+							recommendationtext = recommendationtext.replace('6.  ', '6. Resume therapeutic-dose LMWH \'48 to 72 h after surgery\' as \'high-bleeding-risk surgery\'. (Rec 4.4)')
+							}
+						else{
+							recommendationtext = recommendationtext.replace('6.  ', '6. Resume therapeutic-dose LMWH \'24 h after surgery\' as not \'high-bleeding-risk surgery\'. (Rec 4.4)')
+							}
+						recommendationtext = recommendationtext.replace('7.  ', '7. Check INR at 5 days fter surgery\'. (Suggested in Rec 2.2)')
 						rationaletext = rationaletext.replace('bleedrisk', 'Not stated in guidelines')
 						rationaletext = rationaletext.replace('terisk', 'low (1%-2%) incidence of ATE if bridging occurs')
-						considerationstext = considerationstext.replace('<!--lowrisksurgery-->', '<div>&bull; Therapeutic-dose LMWH is \'enoxaparin 1 mg/kg bid or 1.5 mg/kg daily, dalteparin 100 International Units/kg bid or 200 International Units/kg daily, tinzaparin 175 International Units/kg daily\'(See definitions at start of <a href=\"http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3278059/\">ACCP 2012 Guideline</a>).</div>')
+						considerationstext = considerationstext.replace('<!--lowrisksurgery-->', '<div>&bull; Therapeutic-dose LMWH is \'enoxaparin 1 mg/kg bid or 1.5 mg/kg daily, dalteparin 100 International Units/kg bid or 200 International Units/kg daily, tinzaparin 175 International Units/kg daily\'(See definitions at start of <a href=\"http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3278059/#__sec5title\">ACCP 2012 Guideline</a>).</div>')
+						calendarlink += "bridge=1&";
 						$("#yesbridgingtip").show();
 						}
 					}
@@ -118,7 +138,10 @@
 			}
 		$("#output").html(recommendationtext + "</div><div>&nbsp;</div><div style='font-weight:bold'>Rationale</div>" + rationaletext) 
 		$("#output").css('background','rgba(0,191,2,0.25)')
+		considerationstext += "<div>&bull; The guidelines do not detail the resumption of warfarin. However, the guidelines note \'one study supports resuming warfarin at a dose that is double the patients' usual dose for the first 2 postoperative days, with a mean duration to attain an INR = 2.0 of 4.6 days\' (PMID: <a href='http://pubmed.gov/15364803'>15364803</a>)</div>"
 		$("#considerations").html(considerationstext + "<div>&bull; Provide \'patients and providers with a calendar outlining the perioperative timing of warfarin and antiplatelet drug discontinuation and resumption, dose and timing of LMWH bridging, and INR measurement schedule.\'</div>")
+		$("#calendar").attr('href',calendarlink)
+		$(".ToolTipClass").hide();
 	}
     //init this script when the page has loaded
     $(document).ready(function(){
@@ -161,53 +184,45 @@
 	
     </script>
     
-	<style>
-	
-	.wrapper
-	{
-	  /* width: 860px; */
-	  margin-top: 0px;
-	  margin-right: auto;
-	  margin-bottom: 0px;
-	  margin-left: auto;
-	}
-	th {
-		background-color:#6DC6E7;
-		color:#0022B4;
-		border:0px;
-		spacing:5px;
-		text-align:center;
-		vertical-align: middle;
-	}
-	td{
-		vertical-align:top;
-		padding:5px;
-		spacing:0px;
-	}
-	table{
-		border:0px;
-	}
-	caption{
-	font-size:20px;
-	font-weight:bold;
-	}
-	.tooltiptext{
-		display: none;
-	}
-	.ToolTipClass{
+    <style>
+		th {
+			background-color:#6DC6E7;
+			color:#0022B4;
+			border:0px;
+			spacing:5px;
+			text-align:center;
+			vertical-align: middle;
+		}
+		td{
+			vertical-align:top;
+			padding:5px;
+			spacing:0px;
+		}
+		table{
+			border:0px;
+		}
+		caption{
+		font-size:20px;
+		font-weight:bold;
+		}
+	  .tooltiptext{
+			display: none;
+		}
+	  .ToolTipClass{
 		color:#0022B4;
 		border-width: 3px;
 		border-color: #0022B4;
 		background-color: white;
 		max-width: 600px;
-	}
+		}
     </style>
 	
 </head>
 <body>
-<div class="wrapper">
-<h1>2012 ACCP Periprocedure anticoagulation gudelines</h1>
+
+<h1>2012 ACCP Periprocedure anticoagulation guidelines</h1>
 <h2 style="color:#0022B4">Instructions</h2>
+<div>This page should be viewed in a wide window of 1400px</div>
 <table style="border:0;width:1600">
 <tr><td>
 <div class="container" style="width:1600px;">
@@ -503,20 +518,24 @@
 		<th>&nbsp;</th>
 		</tr>
 		<tr>
-			<td><input type="radio" id="lowrisksurgery1" class="lowrisksurgery" name="lowrisksurgery"/></td>
-			<td><label for="lowrisksurgery1">Minor dental (including "tooth extractions and endodontic (root canal) procedures")?</label></td>
+			<td><input type="radio" id="lowrisksurgery1_dental" class="bleedingrisksurgery" name="bleedingrisksurgery"/></td>
+			<td><label for="lowrisksurgery1_dental">Minor: dental including "tooth extractions and endodontic (root canal) procedures"(2012 Rec 4.4)?</label></td>
 		</tr>
 		<tr>
-			<td><input type="radio" id="lowrisksurgery2" class="lowrisksurgery" name="lowrisksurgery"/></td>
-			<td><label for="lowrisksurgery2">Dermatologic (including "excision of basal and squamous cell skin cancers, actinic keratoses, and premalignant or cancerous skin nevi".)?</label></td>
+			<td><input type="radio" id="lowrisksurgery2_derm" class="bleedingrisksurgery" name="bleedingrisksurgery"/></td>
+			<td><label for="lowrisksurgery2_derm">Minor: dermatologic including "excision of basal and squamous cell skin cancers, actinic keratoses, and premalignant or cancerous skin nevi"(2012 Rec 4.4)?</label></td>
 		</tr>
 		<tr>
-			<td><input type="radio" id="lowrisksurgery3" class="lowrisksurgery" name="lowrisksurgery"/></td>
-			<td><label for="lowrisksurgery3">Cataract?</label></td>
+			<td><input type="radio" id="lowrisksurgery3_eye" class="bleedingrisksurgery" name="bleedingrisksurgery"/></td>
+			<td><label for="lowrisksurgery3_eye">Minor: cataract(2012 Rec 4.4)?</label></td>
 		</tr>
 		<tr>
-			<td><input type="radio" id="lowrisksurgery4" class="lowrisksurgery" name="lowrisksurgery"/></td>
-			<td><label for="lowrisksurgery4">No</label></td>
+			<td><input type="radio" id="highrisksurgery" class="bleedingrisksurgery" name="bleedingrisksurgery"/></td>
+			<td><label for="highrisksurgery">High risk: urologic surgery; "pacemaker or implantable cardioverter-defibrillator device"; "colonic polyp resection, typically of large (ie, > 1-2 cm long) sessile polyps"; "Surgery and procedures in highly vascular organs, such as the kidney, liver, and spleen"; "Cardiac, intracranial, or spinal surgery, especially as small pericardial, intracerebral, or epidural bleeds can have serious clinical consequences" (2012 Rec 4.4)?</label></td>
+		</tr>
+		<tr>
+			<td><input type="radio" id="intermediaterisksurgery" class="bleedingrisksurgery" name="bleedingrisksurgery"/></td>
+			<td><label for="intermediaterisksurgery">None of the above</label></td>
 		</tr>
 		</table>
 		<script>
@@ -575,7 +594,7 @@
 <div onFocus="this.select()" id="output" style="border:3px;border-color:#0022B4;border-style: solid;padding:10px;">
 Proposed text will be here.
 </div>
-<div><a href="periprocedure-calendar.html">Print calendar with instructions for medications</a></div>
+<div><a href="periprocedure-calendar.html" id="calendar" target=_blank>Print calendar with instructions for medications</a> (opens in new window)</div>
 <h2>Additional considerations for this patient</h2>
 <div>Revise recommendations above based on these and other considerations.</div>
 <div onFocus="this.select()" id="considerations" style="border:3px;border-color:#0022B4;border-style: solid;padding:10px">
@@ -614,30 +633,12 @@ Pending.
 <h2 style="color:#0022B4">References</h2>
 <h3>American College of Cardiology/American Heart Association Guidelines</h3>
 <ol>
-<li>1: Douketis JD et al; American College of Chest Physicians. Perioperative management of antithrombotic therapy: Antithrombotic Therapy and Prevention of Thrombosis, 9th ed: American College of Chest Physicians Evidence-Based Clinical Practice Guidelines. Chest. 2012. PMID: <a href="http://pubmed.gov/22315266">22315266</a> PMCID: <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3278059/">PMC3278059</a>.</li>
+<li>1: Douketis JD et al; American College of Chest Physicians. Perioperative management of antithrombotic therapy: Antithrombotic Therapy and Prevention of Thrombosis, 9th ed: American College of Chest Physicians Evidence-Based Clinical Practice Guidelines. Chest. 2012. PMID: <a href="http://pubmed.gov/22315266">22315266</a> PMCID: <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3278059/#__sec5title">PMC3278059</a>.</li>
+</ol>
+<h3>Other</h3>
+<ol>
+<li></li>
 </ol>
 </div>
-<script>
-//For gh-pages
-//Page history and edit
-var pagename = location.pathname.split('/').slice(-1);
-if (pagename.toString().length < 1){pagename = "index.html"}
-document.write("<div style='text-align:center'><a href='https://github.com/guidelines/guidelines.github.io/blob/master/anticoagulation/" + pagename + "'>Edit this page</a> - <a href='https://github.com/guidelines/guidelines.github.io/commits/master/anticoagulation/" + pagename + "'>Page history</a></div>")
-</script>
-
-</div>
-    <script src="javascripts/scale.fix.js"></script>
-              <script type="text/javascript">
-            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-          </script>
-          <script type="text/javascript">
-            try {
-              var pageTracker = _gat._getTracker("UA-56740469-1");
-            pageTracker._trackPageview();
-            } catch(err) {}
-          </script>
-</body>
-</html>
 </body>
 </html>
