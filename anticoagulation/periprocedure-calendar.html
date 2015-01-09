@@ -31,11 +31,13 @@ $(function() {
 if (site == "heartland"){
 	//$("#INRdaybefore_yes").attr("checked", "checked");
 	$("#bridgeno").attr("checked", "checked");
+	$("#bleedingrisk_group").hide();
 	}
 //Pass selection from algorithm
 //Note that these will override site defaults
 if (bridge == "0"){
 	$("#bridgeno").attr("checked", "checked");
+	$("#bleedingrisk_group").hide();
 	}
 if (bridge == "1"){
 	$("#bridgeqd").attr("checked", "checked");
@@ -126,6 +128,8 @@ function makecalendar(){
 				{
 				$("#a" + eval(dayOfProcedure - 5)).val("Last warfarin");
 				}
+			$("#a" + eval(dayOfProcedure + 3)).val("\n\n\n\n");
+			$("#a" + eval(dayOfProcedure + 3)).val($("#a" + eval(dayOfProcedure + 3)).val().replace("\n\n\n\n","\n\nINR check\n\n"));
 			}
 		}
 	else
@@ -133,6 +137,7 @@ function makecalendar(){
 		//bridge
 		if (!$("#holdno").is(':checked'))
 			{
+			//e.g. continue warfarin
 			if ($("#stop3").is(':checked')){
 				//Stop 3 days before
 				$("#a" + eval(dayOfProcedure - 3)).val("Last warfarin");
@@ -201,6 +206,8 @@ function makecalendar(){
 					$("#a" + eval(dayOfProcedure + 3)).val("\n\nInject in A.M.\n\n\n\nInject in P.M.");
 					}
 				}
+	$("#a" + eval(dayOfProcedure + 3)).val($("#a" + eval(dayOfProcedure + 3)).val().replace("\n\n\n\n","\n\nINR check\n\n"));
+	$("#a" + eval(dayOfProcedure + 4)).val("\n\nAsk clinic how long to continue injections.\n\n");
 			}
 		}
 	$("#a" + eval(dayOfProcedure    )).val("If ok with surgeon:\n\n\n\nStart warfarin in P.M."); //Recommendation 2012 - 2.2
@@ -209,8 +216,6 @@ function makecalendar(){
 	if ($("#INRdaybefore_yes").is(':checked')){
 		$("#a" + eval(dayOfProcedure - 1)).val($("#a" + eval(dayOfProcedure - 1)).val().replace("\n\n\n\n","\n\nINR check\n\n"));
 	}
-	$("#a" + eval(dayOfProcedure + 3)).val($("#a" + eval(dayOfProcedure + 3)).val().replace("\n\n\n\n","\n\nINR check\n\n"));
-	$("#a" + eval(dayOfProcedure + 4)).val("\n\nAsk clinic how long to continue injections.\n\n");
 	
 	for ( var i = -14; i < 14; i++ ) {
 		dateLabel.setDate(dateOfProcedure.getDate() + i);
