@@ -15,6 +15,11 @@ function getParameterByName(name) {
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 var site = getParameterByName('site').toLowerCase();
+var bridge = getParameterByName('bridge').toLowerCase();
+var bleedingrisk = getParameterByName('bleedingrisk').toLowerCase();
+var dental = getParameterByName('dental').toLowerCase();
+var holdno = getParameterByName('holdno').toLowerCase();
+var hold6 = getParameterByName('hold6').toLowerCase();
 $(document).ready(function(){
 $(function() {
 	$("#datepicker").datepicker({
@@ -24,32 +29,79 @@ $(function() {
 });
 //Site defaults
 if (site == "heartland"){
-	$("#INRdaybefore_no").attr("checked", "checked");
+	//$("#INRdaybefore_yes").attr("checked", "checked");
 	$("#bridgeno").attr("checked", "checked");
 	}
+//Pass selection from algorithm
+//Note that these will override site defaults
+if (bridge == "0"){
+	$("#bridgeno").attr("checked", "checked");
+	}
+if (bridge == "1"){
+	$("#bridgeqd").attr("checked", "checked");
+	}
+if (bridge == "2"){
+	$("#bridgebid").attr("checked", "checked");
+	}
+if (bleedingrisk == "2"){
+	$("#bleedingrisk_group").show()
+	$("#bleedingrisk_high").attr("checked", "checked");
+	}
+if (bleedingrisk == "0" || bleedingrisk == "1"){
+	$("#bleedingrisk_other").attr("checked", "checked");
+	}
+if (dental == "1"){
+	$("#tranexamic_acid").attr("checked", "checked");
+	}
+if (hold6 == "1"){
+	$("#hold6").attr("checked", "checked");
+	}
+if (holdno == "1"){
+	$("#holdno").attr("checked", "checked");
+	}
 //Event handlers
-$("#bridgeno").click(function(){
+$("#bridgeqd").click(function(){
+	$("#bleedingrisk_group").show();
 	makecalendar()
   });
-
+ 
+$("#bridgebid").click(function(){
+	$("#bleedingrisk_group").show();
+	makecalendar()
+  });
+$("#bridgeno").click(function(){
+	$("#bleedingrisk_group").hide();
+	makecalendar()
+  });
 $("#holdno").click(function(){
 	makecalendar()
   });
-
-  $("#tranexamic_acid").click(function(){
+$("#hold6").click(function(){
 	makecalendar()
   });
-
+$("#bleedingrisk_high").click(function(){
+	makecalendar()
+  });
+$("#bleedingrisk_other").click(function(){
+	makecalendar()
+  });
+$("#tranexamic_acid").click(function(){
+	makecalendar()
+  });
 $("#stop3").click(function(){
 	makecalendar()
   });
-$("#INRdaybefore_no").click(function(){
+$("#INRdaybefore_yes").click(function(){
 	makecalendar()
   });
 })
 });
 
 function makecalendar(){
+	//Reset any color changes
+	$("#bleedingrisk_legend").css("color","black")
+	$("#bridgeno_label").css("color","black")
+	$("#bridging_legend").css("color","black")
 	//Clear calendar
 	for ( var i = 1; i < 22; i++ ) {
 		$("#d" + i).html("&nbsp;");
@@ -61,7 +113,6 @@ function makecalendar(){
 	var dayLabel;
     var dayOfMonth = dateOfProcedure.getDate();
     var dayOfProcedure = dateOfProcedure.getUTCDay() + 8;
-	$("#a" + dayOfProcedure).val("Resume warfarin tonite if ok with your surgeon.");
 	if ($("#bridgeno").is(':checked'))
 		{
 		//no bridge
@@ -82,29 +133,84 @@ function makecalendar(){
 		//bridge
 		if (!$("#holdno").is(':checked'))
 			{
-			if ($("#stop3").is(':checked'))
-				{
+			if ($("#stop3").is(':checked')){
 				//Stop 3 days before
 				$("#a" + eval(dayOfProcedure - 3)).val("Last warfarin");
 				//$("#bridgeno").prop( "checked", true )
 				//alert('Are you sure you want to both bridge and stop warfarin for 3 days?');
 				}
-			else
-				{
+			else{
 				//Stop 5 days before
-				$("#a" + eval(dayOfProcedure - 5)).val("Last warfarin");
-				$("#a" + eval(dayOfProcedure - 3)).val("Start injections");
-				$("#a" + eval(dayOfProcedure - 1)).val("Last injection is this morning");
-				$("#a" + eval(dayOfProcedure + 1)).val("Restart injections if ok with your surgeon.");
-				$("#a" + eval(dayOfProcedure + 3)).val("Ask our office when to stop injections");
+				if ($("#bridgeqd").is(':checked')){
+					if ($("#bleedingrisk_high").is(':checked')){
+						$("#a" + eval(dayOfProcedure + 2)).val("If ok with surgeon:\nInject in A.M.\n\n\n\n");//Recommendation 2012 - 4.4
+						}
+					else{
+						if ($("#bleedingrisk_other").is(':checked')){
+							$("#a" + eval(dayOfProcedure + 1)).val("If ok with surgeon:\nInject in A.M.\n\n\n\n");//Recommendation 2012 - 4.4
+							$("#a" + eval(dayOfProcedure + 2)).val("\n\nInject in A.M.\n\n\n\n");
+							}
+						else{
+							//alert('Select a risk of bleeding or no bridging');
+							$("#bleedingrisk_legend").css("color","red")
+							$("#bridging_legend").css("color","red")
+							//$("#bridgeno_label").css("color","red")
+							return;
+							}
+						}
+					if ($("#hold6").is(':checked')){
+						$("#a" + eval(dayOfProcedure - 6)).val("\n\nLast warfarin\n\n\n\n");
+						$("#a" + eval(dayOfProcedure - 4)).val("\n\nInject in A.M.\n\n\n\n");
+						}
+					else{
+						$("#a" + eval(dayOfProcedure - 5)).val("\n\nLast warfarin\n\n\n\n");
+						}
+					$("#a" + eval(dayOfProcedure - 3)).val("\n\nInject in A.M.\n\n\n\n");
+					$("#a" + eval(dayOfProcedure - 2)).val("\n\nInject in A.M.\n\n\n\n");
+					$("#a" + eval(dayOfProcedure - 1)).val("\n\nInject 1/2 dose in A.M.\n\n\n\n");
+					$("#a" + eval(dayOfProcedure    )).val("\n\nInject 1/2 dose in A.M.\n\n\n\n");
+					$("#a" + eval(dayOfProcedure + 3)).val("\n\nInject in A.M.\n\n\n\n");
+					}
+				if ($("#bridgebid").is(':checked')){
+					if ($("#bleedingrisk_high").is(':checked')){
+						$("#a" + eval(dayOfProcedure + 2)).val("If ok with surgeon:\nInject in A.M.\n\n\n\nInject in P.M.");//Recommendation 2012 - 4.4
+						}
+					else{
+						if ($("#bleedingrisk_other").is(':checked')){
+							$("#a" + eval(dayOfProcedure + 1)).val("If ok with surgeon:\nInject in A.M.\n\n\n\nInject in P.M.");//Recommendation 2012 - 4.4
+							$("#a" + eval(dayOfProcedure + 2)).val("\n\nInject in A.M.\n\n\n\nInject in P.M.");
+							}
+						else{
+							//alert('Select a risk of bleeding or no bridging');
+							$("#bleedingrisk_legend").css("color","red")
+							$("#bridging_legend").css("color","red")
+							//$("#bridgeno_label").css("color","red")
+							return;
+							}
+						}
+					if ($("#hold6").is(':checked')){
+						$("#a" + eval(dayOfProcedure - 6)).val("\n\nLast warfarin\n\n\n\n");
+						$("#a" + eval(dayOfProcedure - 4)).val("\n\nInject in A.M.\n\n\n\nInject in P.M.");
+						}
+					else{
+						$("#a" + eval(dayOfProcedure - 5)).val("\n\nLast warfarin\n\n\n\n");
+						}
+					$("#a" + eval(dayOfProcedure - 3)).val("\n\nInject in A.M.\n\n\n\nInject in P.M.");
+					$("#a" + eval(dayOfProcedure - 2)).val("\n\nInject in A.M.\n\n\n\nInject in P.M.");
+					$("#a" + eval(dayOfProcedure - 1)).val("\n\nInject in A.M.\n\n\n\n"); //Recommendation 2012 - 4.3
+					$("#a" + eval(dayOfProcedure + 3)).val("\n\nInject in A.M.\n\n\n\nInject in P.M.");
+					}
 				}
 			}
 		}
+	$("#a" + eval(dayOfProcedure    )).val("If ok with surgeon:\n\n\n\nStart warfarin in P.M."); //Recommendation 2012 - 2.2
+	//$("#a" + eval(dayOfProcedure + 1)).val($("#a" + eval(dayOfProcedure + 1)).val() + "\nStart warfarin");
 	//INR checks
-	if (!$("#INRdaybefore_no").is(':checked')){
-		$("#a" + eval(dayOfProcedure - 1)).val("INR check\n\n" + $("#a" + eval(dayOfProcedure - 1)).val());
+	if ($("#INRdaybefore_yes").is(':checked')){
+		$("#a" + eval(dayOfProcedure - 1)).val($("#a" + eval(dayOfProcedure - 1)).val().replace("\n\n\n\n","\n\nINR check\n\n"));
 	}
-	$("#a" + eval(dayOfProcedure + 3)).val("INR check\n\n" + $("#a" + eval(dayOfProcedure + 3)).val());
+	$("#a" + eval(dayOfProcedure + 3)).val($("#a" + eval(dayOfProcedure + 3)).val().replace("\n\n\n\n","\n\nINR check\n\n"));
+	$("#a" + eval(dayOfProcedure + 4)).val("\n\nAsk clinic how long to continue injections.\n\n");
 	
 	for ( var i = -14; i < 14; i++ ) {
 		dateLabel.setDate(dateOfProcedure.getDate() + i);
@@ -114,7 +220,7 @@ function makecalendar(){
 	$("#pt_instructions").html("");
 	if ($("#tranexamic_acid").is(':checked'))
 		{
-		$("#pt_instructions").html("The healthcare provider performing your procedure may use an oral rinse to decrease bleeding. <ul><li>It is given as one teaspoon (5 ml) oral rinse, 5 to 10 min before the dental procedure and 3 to 4 times daily for 1 to 2 days after the procedure. </li><li>Hold 10 mL in mouth and rinse for 2 minutes then spit out. </li><li>Do not eat or drink for 1 hour after using oral rinse. <l/i><li>Minor bleeding (or oozing from gingival mucosa) may occur. Continue tranexamic acid use and apply local pressure to stop such bleeding.</li></ul>");
+		$("#pt_instructions").html("<span style=\"font-weight:bold\">The healthcare provider performing your procedure may use an oral rinse (tranexamic acid) to decrease bleeding.</span><ul><li>It is given as one teaspoon (5 ml) oral rinse, 5 to 10 min before the dental procedure and 3 to 4 times daily for 1 to 2 days after the procedure. </li><li>Hold 10 mL in mouth and rinse for 2 minutes then spit out. </li><li>Do not eat or drink for 1 hour after using oral rinse. <l/i><li>Minor bleeding (or oozing from gingival mucosa) may occur. Continue tranexamic acid use and apply local pressure to stop such bleeding.</li></ul>");
 		}
 	$("#d" + eval(dayOfProcedure)).html("<span style=\"color:red;float:left\">*Procedure*</span><span style=\"color:red;float:right;\">" + dayOfMonth + "</span>");
 }
@@ -122,7 +228,7 @@ function makecalendar(){
 <style>
 .wrapper
 {
-  width: 860px;
+  width: 950px;
   margin-top: 0px;
   margin-right: auto;
   margin-bottom: 0px;
@@ -148,8 +254,8 @@ hr
 	}
 textarea
 	{
-	width:100px;
-	height:100px;
+	width:120px;
+	height:125px;
 	overflow:auto;
 	resize:yes;
 	}
@@ -187,14 +293,25 @@ document.write("<img src=\"/images/sites/" + site + ".png\" style=\"display: blo
 <h2>Calendar for anticoagulation around your procedure</h2>
 <p>Date of procedure/surgery: <input type="text" id="datepicker"></p>
 <p>Your name: <input type="text" id="yourname" placeholder="type over this text before printing" style="width:200px"></p>
-<div style="background-color:#E4E4E4; width:775px;padding:1px 5px 1px 5px" class="instructions">
+<div style="background-color:#E4E4E4; width:850px;padding:1px 5px 1px 5px" class="instructions">
 <p>Health care staff (these instructions in light gray will not be printed):</p>
 <p style="margin-left: 10px">Type in pt name then edit and move text away from weekends if needed before printing.</p>
-<p style="margin-left: 10px"><input type="checkbox" id="bridgeno"/><label for="bridgeno">Don't bridge</label>&nbsp;<input type="checkbox" id="holdno"/><label for="bridgeno">Don't hold warfarin</label>&nbsp;<input type="checkbox" id="INRdaybefore_no"/><label for="INRdaybefore_no">Don't check INR day before procedure</label></p>
-<p style="margin-left: 10px"><input type="checkbox" id="tranexamic_acid"/><label for="tranexamic_acid">Show tranexamic acid instructions?</label>&nbsp;<input type="checkbox" id="stop3"/><label for="stop3">Stop warfarin for three days and no bridge - for minor dental procedures including "tooth extractions and endodontic (root canal)",</label></p>
+<input type="checkbox" id="holdno"/><label for="bridgeno">Don't hold warfarin</label>&nbsp;<input type="checkbox" id="hold6"/><label for="hold6">Hold warfarin for 6 days (current INR > 3)<sup>(2)</sup></label>&nbsp;<input type="checkbox" id="INRdaybefore_yes"/><label for="INRdaybefore_yes">Check INR day before procedure (suggested in Rec 2.3)</label>
+<fieldset style="border: 3px solid #6DC6E7; background-color:#E4E4E4;width:825px;">
+<legend id="bridging_legend">Bridging:</legend>
+<input type="radio" name="bridge" id="bridgeqd"/><label for="bridgeqd">Enoxaparin 1.5 mg/kg daily</label>&nbsp;<input type="radio" name="bridge" id="bridgebid" checked /><label for="bridgebid">Enoxaparin 1 mg/kg bid</label>&nbsp;<input type="radio" name="bridge" id="bridgeno"/><label for="bridgeno"  id="bridgeno_label">No bridge</label>
+</fieldset>
+<fieldset style="border: 3px solid #6DC6E7; background-color:#E4E4E4;width:825px;" id="bleedingrisk_group">
+<legend id="bleedingrisk_legend">Bleeding risk for bridging:</legend>
+<input type="radio" name="bleedingrisk" id="bleedingrisk_high"/><label for="bleedingrisk_high">High risk (restart LMWH at 48 hours): urologic surgery; "pacemaker or implantable cardioverter-defibrillator device"; "colonic polyp resection, typically of large (ie, > 1-2 cm long) sessile polyps"; "Surgery and procedures in highly vascular organs, such as the kidney, liver, and spleen"; "Cardiac, intracranial, or spinal surgery, especially as small pericardial, intracerebral, or epidural bleeds can have serious clinical consequences" (2012 Rec 4.4)?</label>&nbsp;<br>
+<input type="radio" name="bleedingrisk" id="bleedingrisk_other"/><label for="bleedingrisk_low">Other (restart LMWH at 24 hours)</label>
+</fieldset>
+<fieldset style="border: 3px solid #6DC6E7; background-color:#E4E4E4;width:825px;">
+<legend>If dental:</legend>
+<input type="checkbox" id="tranexamic_acid"/><label for="tranexamic_acid">Include tranexamic acid instructions below calendar?</label>&nbsp;<input type="checkbox" id="stop3"/><label for="stop3">Stop warfarin for three days and no bridge - alternative for minor dental procedures including "tooth extractions and endodontic (root canal)"</label>
+</fieldset>
 <p style="margin-left: 10px"><a href="javascript:window.print()">Print</a></p>
 </div>
-<div>&nbsp;</div>
 <table style="border-width: 1px; border-style: outset;width:775px">
 <tr><th>Sunday</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th><th>Saturday</th></tr>
 <tr><td class="weekend"><div id="d1" class="weekend">&nbsp;</div><hr/><textarea id="a1"  class="weekend"></textarea></td><td><div id="d2"  class="label">&nbsp;</div><hr/><textarea id="a2" ></textarea></td><td><div id="d3"  class="label">&nbsp;</div><hr/><textarea id="a3" ></textarea></td><td><div id="d4"  class="label">&nbsp;</div><hr/><textarea id="a4" ></textarea></td><td><div id="d5"  class="label">&nbsp;</div><hr/><textarea id="a5" ></textarea></td><td><div id="d6"  class="label">&nbsp;</div><hr/><textarea id="a6" ></textarea></td><td class="weekend"><div id="d7"  class="weekend">&nbsp;</div><hr/><textarea id="a7"  class="weekend"></textarea></td></tr>
@@ -206,9 +323,10 @@ document.write("<img src=\"/images/sites/" + site + ".png\" style=\"display: blo
 <!--<p>Developed by:
 <p><a href="http://wichita.kumc.edu/php">Population Health in Practice</a><br/>Kansas University School of Medicine - Wichita</p>
 -->
-<p class="instructions">Based on ACCP 2012 Guidelines</p>
+<h3 class="instructions">References</h3>
 <ol class="instructions">
 <li>Douketis JD et al; American College of Chest Physicians. Perioperative management of antithrombotic therapy: Antithrombotic Therapy and Prevention of Thrombosis, 9th ed: American College of Chest Physicians Evidence-Based Clinical Practice Guidelines. Chest. 2012. PMID: <a href="http://pubmed.gov/22315266">22315266</a> PMCID: <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3278059/">PMC3278059</a>.</li>
+<li>Douketis JD et al; American College of Chest Physicians. The perioperative management of antithrombotic therapy: American College of Chest Physicians Evidence-Based Clinical Practice Guidelines (8th Edition). Chest. 2008 Jun;133(6 Suppl):299S-339S. doi: <a href="http://dx.doi.org/10.1378/chest.08-0675">10.1378/chest.08-0675</a>. PMID: <a href="http://pubmed.gov/18574269">18574269</a>.</li>
 </ol>
 </div>
 </body>
