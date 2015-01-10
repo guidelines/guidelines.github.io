@@ -63,11 +63,13 @@ if (holdno == "1"){
 	}
 //Event handlers
 $("#bridgeqd").click(function(){
+	$("#holdno").attr("checked",false); //Cleaning in case left on
 	$("#bleedingrisk_group").show();
 	makecalendar()
   });
  
 $("#bridgebid").click(function(){
+	$("#holdno").attr("checked",false); //Cleaning in case left on
 	$("#bleedingrisk_group").show();
 	makecalendar()
   });
@@ -76,9 +78,11 @@ $("#bridgeno").click(function(){
 	makecalendar()
   });
 $("#holdno").click(function(){
+	$("#hold6").attr("checked",false); //Cleaning in case left on
 	makecalendar()
   });
 $("#hold6").click(function(){
+	$("#holdno").attr("checked",false); //Cleaning in case left on
 	makecalendar()
   });
 $("#bleedingrisk_high").click(function(){
@@ -90,7 +94,7 @@ $("#bleedingrisk_other").click(function(){
 $("#tranexamic_acid").click(function(){
 	makecalendar()
   });
-$("#stop3").click(function(){
+$("#hold3").click(function(){
 	makecalendar()
   });
 $("#INRdaybefore_yes").click(function(){
@@ -115,107 +119,111 @@ function makecalendar(){
 	var dayLabel;
     var dayOfMonth = dateOfProcedure.getDate();
     var dayOfProcedure = dateOfProcedure.getUTCDay() + 8;
-	if ($("#bridgeno").is(':checked'))
-		{
+	$("#a" + eval(dayOfProcedure - 1)).val("\n\n\n\n") //Needed for replacements
+	
+	if ($("#bridgeno").is(':checked')){
 		//no bridge
-		if (!$("#holdno").is(':checked'))
-			{
-			if ($("#stop3").is(':checked'))
+		if (!$("#holdno").is(':checked')){
+			//Hold warfarin without bridge
+			if ($("#hold3").is(':checked'))
 				{
+				//Dental
 				$("#a" + eval(dayOfProcedure - 3)).val("Last warfarin");
+				}
+			else if ($("#hold6").is(':checked'))
+				{
+				//This would make no sense
+				$("#a" + eval(dayOfProcedure - 6)).val("Last warfarin");
 				}
 			else
 				{
+				//Low TE risk so hold warfarin without bridge
 				$("#a" + eval(dayOfProcedure - 5)).val("Last warfarin");
 				}
 			$("#a" + eval(dayOfProcedure + 3)).val("\n\n\n\n");
 			$("#a" + eval(dayOfProcedure + 3)).val($("#a" + eval(dayOfProcedure + 3)).val().replace("\n\n\n\n","\n\nINR check\n\n"));
 			}
-		}
-	else
-		{
-		//bridge
-		if (!$("#holdno").is(':checked'))
-			{
-			//e.g. continue warfarin
-			if ($("#stop3").is(':checked')){
-				//Stop 3 days before
-				$("#a" + eval(dayOfProcedure - 3)).val("Last warfarin");
-				//$("#bridgeno").prop( "checked", true )
-				//alert('Are you sure you want to both bridge and stop warfarin for 3 days?');
-				}
-			else{
-				//Stop 5 days before
-				if ($("#bridgeqd").is(':checked')){
-					if ($("#bleedingrisk_high").is(':checked')){
-						$("#a" + eval(dayOfProcedure + 2)).val("If ok with surgeon:\nInject in A.M.\n\n\n\n");//Recommendation 2012 - 4.4
-						}
-					else{
-						if ($("#bleedingrisk_other").is(':checked')){
-							$("#a" + eval(dayOfProcedure + 1)).val("If ok with surgeon:\nInject in A.M.\n\n\n\n");//Recommendation 2012 - 4.4
-							$("#a" + eval(dayOfProcedure + 2)).val("\n\nInject in A.M.\n\n\n\n");
-							}
-						else{
-							//alert('Select a risk of bleeding or no bridging');
-							$("#bleedingrisk_legend").css("color","red")
-							$("#bridging_legend").css("color","red")
-							//$("#bridgeno_label").css("color","red")
-							return;
-							}
-						}
-					if ($("#hold6").is(':checked')){
-						$("#a" + eval(dayOfProcedure - 6)).val("\n\nLast warfarin\n\n\n\n");
-						$("#a" + eval(dayOfProcedure - 4)).val("\n\nInject in A.M.\n\n\n\n");
-						}
-					else{
-						$("#a" + eval(dayOfProcedure - 5)).val("\n\nLast warfarin\n\n\n\n");
-						}
-					$("#a" + eval(dayOfProcedure - 3)).val("\n\nInject in A.M.\n\n\n\n");
-					$("#a" + eval(dayOfProcedure - 2)).val("\n\nInject in A.M.\n\n\n\n");
-					$("#a" + eval(dayOfProcedure - 1)).val("\n\nInject 1/2 dose in A.M.\n\n\n\n");
-					$("#a" + eval(dayOfProcedure    )).val("\n\nInject 1/2 dose in A.M.\n\n\n\n");
-					$("#a" + eval(dayOfProcedure + 3)).val("\n\nInject in A.M.\n\n\n\n");
-					}
-				if ($("#bridgebid").is(':checked')){
-					if ($("#bleedingrisk_high").is(':checked')){
-						$("#a" + eval(dayOfProcedure + 2)).val("If ok with surgeon:\nInject in A.M.\n\n\n\nInject in P.M.");//Recommendation 2012 - 4.4
-						}
-					else{
-						if ($("#bleedingrisk_other").is(':checked')){
-							$("#a" + eval(dayOfProcedure + 1)).val("If ok with surgeon:\nInject in A.M.\n\n\n\nInject in P.M.");//Recommendation 2012 - 4.4
-							$("#a" + eval(dayOfProcedure + 2)).val("\n\nInject in A.M.\n\n\n\nInject in P.M.");
-							}
-						else{
-							//alert('Select a risk of bleeding or no bridging');
-							$("#bleedingrisk_legend").css("color","red")
-							$("#bridging_legend").css("color","red")
-							//$("#bridgeno_label").css("color","red")
-							return;
-							}
-						}
-					if ($("#hold6").is(':checked')){
-						$("#a" + eval(dayOfProcedure - 6)).val("\n\nLast warfarin\n\n\n\n");
-						$("#a" + eval(dayOfProcedure - 4)).val("\n\nInject in A.M.\n\n\n\nInject in P.M.");
-						}
-					else{
-						$("#a" + eval(dayOfProcedure - 5)).val("\n\nLast warfarin\n\n\n\n");
-						}
-					$("#a" + eval(dayOfProcedure - 3)).val("\n\nInject in A.M.\n\n\n\nInject in P.M.");
-					$("#a" + eval(dayOfProcedure - 2)).val("\n\nInject in A.M.\n\n\n\nInject in P.M.");
-					$("#a" + eval(dayOfProcedure - 1)).val("\n\nInject in A.M.\n\n\n\n"); //Recommendation 2012 - 4.3
-					$("#a" + eval(dayOfProcedure + 3)).val("\n\nInject in A.M.\n\n\n\nInject in P.M.");
-					}
-				}
-	$("#a" + eval(dayOfProcedure + 3)).val($("#a" + eval(dayOfProcedure + 3)).val().replace("\n\n\n\n","\n\nINR check\n\n"));
-	$("#a" + eval(dayOfProcedure + 4)).val("\n\nAsk clinic how long to continue injections.\n\n");
+		else{
+			//Neither hold warfarin nor bridge
+			//Must be minor dental, skin, eye
 			}
 		}
-	$("#a" + eval(dayOfProcedure    )).val("If ok with surgeon:\n\n\n\nStart warfarin in P.M."); //Recommendation 2012 - 2.2
-	//$("#a" + eval(dayOfProcedure + 1)).val($("#a" + eval(dayOfProcedure + 1)).val() + "\nStart warfarin");
-	//INR checks
+	else{
+		//Bridge
+		$("#holdno").attr("checked",false);
+		//Bridge QD or BID
+		if ($("#bridgeqd").is(':checked')){
+			//Bridge QD
+			//When to resume based on bleeding risk?
+			if ($("#bleedingrisk_high").is(':checked')){
+				$("#a" + eval(dayOfProcedure + 2)).val("If ok with surgeon:\nInject in A.M.\n\n\n\n");//Recommendation 2012 - 4.4
+				}
+			else if ($("#bleedingrisk_other").is(':checked')){
+				$("#a" + eval(dayOfProcedure + 1)).val("If ok with surgeon:\nInject in A.M.\n\n\n\n");//Recommendation 2012 - 4.4
+				$("#a" + eval(dayOfProcedure + 2)).val("\n\nInject in A.M.\n\n\n\n");
+				}
+			else{
+				//Warning
+				$("#bleedingrisk_legend").css("color","red")
+				$("#bridging_legend").css("color","red")
+				return;
+				}
+			if ($("#hold6").is(':checked')){
+				$("#a" + eval(dayOfProcedure - 4)).val("\n\nInject in A.M.\n\n\n\n");
+				}
+			$("#a" + eval(dayOfProcedure - 3)).val("\n\nInject in A.M.\n\n\n\n");
+			$("#a" + eval(dayOfProcedure - 2)).val("\n\nInject in A.M.\n\n\n\n");
+			$("#a" + eval(dayOfProcedure - 1)).val("\n\nInject 1/2 dose in A.M.\n\n\n\n");
+			$("#a" + eval(dayOfProcedure    )).val("\n\nInject 1/2 dose in A.M.\n\n\n\n");
+			$("#a" + eval(dayOfProcedure + 3)).val("\n\nInject in A.M.\n\n\n\n");
+			}
+		if ($("#bridgebid").is(':checked')){
+			//Bridge BID
+			//When to resume based on bleeding risk?
+			if ($("#bleedingrisk_high").is(':checked')){
+				$("#a" + eval(dayOfProcedure + 2)).val("If ok with surgeon:\nInject in A.M.\n\n\n\nInject in P.M.");//Recommendation 2012 - 4.4
+				}
+			else if ($("#bleedingrisk_other").is(':checked')){
+				$("#a" + eval(dayOfProcedure + 1)).val("If ok with surgeon:\nInject in A.M.\n\n\n\nInject in P.M.");//Recommendation 2012 - 4.4
+				$("#a" + eval(dayOfProcedure + 2)).val("\n\nInject in A.M.\n\n\n\nInject in P.M.");
+				}
+			else{
+				//Warning
+				$("#bleedingrisk_legend").css("color","red")
+				$("#bridging_legend").css("color","red")
+				return;
+				}
+			if ($("#hold6").is(':checked')){
+				$("#a" + eval(dayOfProcedure - 4)).val("\n\nInject in A.M.\n\n\n\nInject in P.M.");
+				}
+			$("#a" + eval(dayOfProcedure - 3)).val("\n\nInject in A.M.\n\n\n\nInject in P.M.");
+			$("#a" + eval(dayOfProcedure - 2)).val("\n\nInject in A.M.\n\n\n\nInject in P.M.");
+			$("#a" + eval(dayOfProcedure - 1)).val("\n\nInject in A.M.\n\n\n\n"); //Recommendation 2012 - 4.3
+			$("#a" + eval(dayOfProcedure + 3)).val("\n\nInject in A.M.\n\n\n\nInject in P.M.");
+			}
+		//When to stop warfarin?
+		if ($("#hold3").is(':checked')){
+			//Stop 3 days before
+			$("#a" + eval(dayOfProcedure - 3)).val("Last warfarin");
+			}
+		else if ($("#hold6").is(':checked')){
+			//Stop 6 days before
+			$("#a" + eval(dayOfProcedure - 6)).val("\n\nLast warfarin\n\n\n\n");
+			}
+		else{
+			//Stop 5 days before
+			$("#a" + eval(dayOfProcedure - 5)).val("\n\nLast warfarin\n\n\n\n");
+			}
+		//Wrap up
+		$("#a" + eval(dayOfProcedure + 3)).val($("#a" + eval(dayOfProcedure + 3)).val().replace("\n\n\n\n","\n\nINR check\n\n"));
+		$("#a" + eval(dayOfProcedure + 4)).val("\n\nAsk clinic how long to continue injections.\n\n");
+		//End of instructions for bridging
+		}
+	$("#a" + eval(dayOfProcedure + 0)).val("If ok with surgeon:\n\n\n\nStart warfarin in P.M."); //Recommendation 2012 - 2.2
+	//INR check before procedure
 	if ($("#INRdaybefore_yes").is(':checked')){
 		$("#a" + eval(dayOfProcedure - 1)).val($("#a" + eval(dayOfProcedure - 1)).val().replace("\n\n\n\n","\n\nINR check\n\n"));
-	}
+		}
 	
 	for ( var i = -14; i < 14; i++ ) {
 		dateLabel.setDate(dateOfProcedure.getDate() + i);
@@ -292,7 +300,10 @@ textarea
 <script>
 if (site.length>0)
 {
-document.write("<img src=\"/images/sites/" + site + ".png\" style=\"display: block;margin-left: auto; margin-right: auto;\" />")
+if (location.host == "sumsearch.org")
+	{document.write("<img src=\"/images/sites/" + site + ".png\" style=\"display: block;margin-left: auto; margin-right: auto;\" />")}
+else
+	{document.write("<img src=\"images/sites/" + site + ".png\" style=\"display: block;margin-left: auto; margin-right: auto;\" />")}
 }
 </script>
 <h2>Calendar for anticoagulation around your procedure</h2>
@@ -313,7 +324,7 @@ document.write("<img src=\"/images/sites/" + site + ".png\" style=\"display: blo
 </fieldset>
 <fieldset style="border: 3px solid #6DC6E7; background-color:#E4E4E4;width:825px;">
 <legend>If dental:</legend>
-<input type="checkbox" id="tranexamic_acid"/><label for="tranexamic_acid">Include tranexamic acid instructions below calendar?</label>&nbsp;<input type="checkbox" id="stop3"/><label for="stop3">Stop warfarin for three days and no bridge - alternative for minor dental procedures including "tooth extractions and endodontic (root canal)"</label>
+<input type="checkbox" id="tranexamic_acid"/><label for="tranexamic_acid">Include tranexamic acid instructions below calendar?</label>&nbsp;<input type="checkbox" id="hold3"/><label for="hold3">Stop warfarin for 3 days and no bridge - alternative for minor dental procedures including "tooth extractions and endodontic (root canal)"</label>
 </fieldset>
 <p style="margin-left: 10px"><a href="javascript:window.print()">Print</a></p>
 </div>
