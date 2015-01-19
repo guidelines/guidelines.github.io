@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>2014 ACC/AHA Guideline on Perioperative Cardiovascular Evaluation</title>
+
+<!-- jquery -->
+<script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+<!-- tooltip -->
+<script type="text/javascript" src="/qtip/jquery.qtip.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="/qtip/jquery.qtip.min.css" />
+<script>
+	var rcriscore = -1;
+	var estMETs = -1;
+	var lowrisksurgery = 0;
+	var stresshelp = [];
+	function printoutput(){
+		var recommendationtext = $("#recommendationssource").html();
+		var rationaletext = $("#rationalesource").html()
+		var considerationstext =  $("#considerationssource").html();
+		$("#dasi").hide();
+		$("#dasi-ok").hide();
+		$("#dasi-poor").hide();
+		$("#proceed_to_surgery1").hide();
+		$("#proceed_to_surgery2").hide();
+		$("#stress").hide();
+		$(".ToolTipClass").hide();
+		$("#output").css('background','rgba(0,191,2,0)')
+		$("#considerations").css('background','rgba(0,191,2,0)')
+		if (lowrisksurgery == 1)
+			{
+			$("#proceed_to_surgery1").show();
+			$("#rcri").hide();
+			rationaletext = "<div style='font-weight:bold'>Rationale:</div>Low risk procedure per ACC/AHA 2007 guidelines. Risk of major cardiac complications and death < 1%."
+			considerationstext = "No additional considerations"
+			$("#output").html(recommendationtext.replace('1.', '1. May proceed to surgery without further cardiac testing. No EKG needed (Rec 3.2 &amp; 4.1 of AHA/ACC 2014 Guideline)</div>') + rationaletext)
+			$("#considerations").html(considerationstext)
+			$("#output").css('background','rgba(0,191,2,0.25)')
+			return;
+			}
+		else
+			{
+			considerationstext = considerationstext.replace('<!--ecg-->', '<div>&bull; An <span style=\'color:red;font-weight:bold\'>ECG</span> within 30 days of surgery is adequate for those with stable disease in whom a preoperative ECG is indicated (Recommendation 5.2.1 of <a href=\"http://dx.doi.org/10.1016/j.jacc.2014.02.536\">AHA/ACC 2007 Guideline</a>).</div>')
+			$("#rcri").show();
+			$("#output").html("Proposed text will be here.");
+			$("#output").css('background','rgba(0,191,2,0)')
+			}
+		if (rcriscore == -1 && estMETs == -1){return;}
+		//Individual considerations - start
+		//http://connect.sgim.org/communities/viewdiscussions/viewthread/?GroupId=1945&MessageKey=8aeb39d3-3f64-4435-97cb-13e8477a1a43
+		$(".other").each(function() {
+			if (this.checked) { 
+				if($(this).attr("id") == "other1"){
+					considerationstext = considerationstext.replace('<!--valves-->', '<div>&bull; Due to prior moderate to severe valvular heart disease, <span style=\'color:red;font-weight:bold\'>consider echocardiogram</span> " if there has been either 1) no prior echocardiography within 1 year or 2) a significant change in clinical status or physical examination since last evaluation\" (Recommendation 2.1 of <a href=\"http://dx.doi.org/10.1016/j.jacc.2014.02.536\">AHA/ACC 2014 Guideline</a>).</div>')
+					}
+				if($(this).attr("id") == "other2"){
+					//considerationstext = considerationstext.replace('<!--devices-->', '<div>&bull; Due to implantable cardiac device, <span style=\'color:red;font-weight:bold\'>consider coordination of the surgical/procedure team and clinician following the cardiovascular implantable electronic device</span> (Recommendation 2.5.1 of <a href=\"http://dx.doi.org/10.1016/j.jacc.2014.02.536\">AHA/ACC 2014 Guidelines</a>).</div>')
+					}
+				}
+			});
+		$(".rcri").each(function() {
+			if (this.checked) {
+				if($(this).attr("id") == "rcri2"){
+					//considerationstext = considerationstext.replace('<!--ischemic heart-->', '<div>&bull; If either 1) revascularization > 5 years ago and no subsequent evaluation, or 2) last coronary evaluation > two years, or 3) symptoms progressing, then <span style=\'color:red;font-weight:bold\'>consider coronary evaluation</span>.\n\n(per AHA/ACC <a href=\"http://circ.ahajournals.org/content/105/10/1257\">2002 Guideline</a>).</div>')
+					}
+				if($(this).attr("id") == "rcri3"){
+					considerationstext = considerationstext.replace('<!--failure-->', '<div>&bull; Due to prior heart failure, <span style=\'color:red;font-weight:bold\'>consider echocardiogram to quantify EF if not done within the last year.</span>\n\n(Recommendation 5.2 of <a href=\"http://dx.doi.org/10.1016/j.jacc.2014.02.536\">AHA/ACC 2014 Guidelines</a>).</div>')
+					}
+				}
+		});
+		$("#considerations").html(considerationstext)
+		//Individual considerations - end
+		if (rcriscore < 2)
+			{
+			$("#proceed_to_surgery1").show();
+			rationaletext = rationaletext.replace('macerate', '0.4%');
+			rationaletext = rationaletext.replace('cvdeathrate', '0.3%');
+			rationaletext = rationaletext.replace('rcriscore', rcriscore);
+			rationaletext = rationaletext.replace('estMETs', "Not relevent due to RCRI being low risk.");
+			$("#output").html(recommendationtext.replace('1.', '1. May proceed to surgery without further cardiac testing\n\n(Rec 3.1 of AHA/ACC 2014 Guidelines).') + "</div><div>&nbsp;</div>" + rationaletext)
+			$("#output").css('background','rgba(0,191,2,0.25)')
+			return;
+			}
+		else
+			{
+			$("#dasi").show();
+			}
+		if (estMETs == -1){return;}
+		if (estMETs < 4)
+			{
+			$("#dasi-poor").show();
+			if (stresshelp.toString().length > 0){
+				if (stresshelp == 0){
+					$("#proceed_to_surgery2").show();
+					recommendationtext = recommendationtext.replace('1.', '1. <span style=\'color:red;font-weight:bold\'>Stress testing</span>, if it will affect decision making or postoperative care, due to poor (<4 METs) or unknown functional capacity, (Recs 5.1 through 5.3 of AHA/ACC 2014 Guidelines).')
+					}
+				if (stresshelp == 1){
+					$("#stress").show();
+					recommendationtext = recommendationtext.replace('1.', '1. <span style=\'color:red;font-weight:bold\'>Stress testing</span>, if it will affect decision making or postoperative care, due to poor (<4 METs) or unknown functional capacity, (Recs 5.1 through 5.3 of AHA/ACC 2014 Guidelines).')
+					rationaletext = $("#rationalesource").html().replace('estMETs', '<span style=\'color:red;font-weight:bold\'>' + estMETs + ' (poor)</span>');
+					//This version contains separate 5.3 and 5.5
+					//considerationstext = considerationstext.replace('<!--dasi-poor-->', '<div>&bull; \"For patients with elevated risk and unknown functional capacity, it may be reasonable to perform <span style=\"color:red;font-weight:bold\">exercise testing</span> to assess for functional capacity if it will change management."\n\n(Recommendation 5.3 of <a href=\"http://dx.doi.org/10.1016/j.jacc.2014.02.536\">AHA/ACC 2014 Guidelines</a>).</div><div>&bull; \"It is reasonable for patients who are at an elevated risk for noncardiac surgery and have poor functional capacity (<4 METs) to undergo noninvasive <span style=\"color:red;font-weight:bold\">pharmacological stress testing</span> (either dobutamine stress echocardiogram [DSE] or pharmacological stress MPI) if it will change management.\"\n\n(Recommendation 5.3 of <a href=\"http://dx.doi.org/10.1016/j.jacc.2014.02.536\">AHA/ACC 2014 Guidelines</a>).</div>')
+					//This version contains combined 5.3 and 5.5
+					considerationstext = considerationstext.replace('<!--dasi-poor-->', '<div>&bull; For patients with elevated risk and unknown functional [or poor] capacity, it may be reasonable to perform <span style=\"color:red;font-weight:bold\">exercise or pharmacologic testing</span> if it will change management.\n\n(Recommendations 5.3, 5.4, 5.5 of <a href=\"http://dx.doi.org/10.1016/j.jacc.2014.02.536\">AHA/ACC 2014 Guidelines</a>). Regarding availability of prior testing, 2014 Guideline makes no statement; however, consider repeat evaluation if either 1) revascularization > 5 years ago and no subsequent evaluation, or 2) last coronary evaluation > two years, or 3) symptoms progressing (per AHA/ACC <a href=\"http://circ.ahajournals.org/content/105/10/1257\">2002 Guideline</a>).</div>')
+					}
+				}
+			else{
+				return;}
+				}
+		else
+			{
+			$("#proceed_to_surgery1").show();
+			recommendationtext = recommendationtext.replace('1.', '1. May proceed to surgery without further cardiac testing (Rec 3.2 of AHA/ACC 2014 guideline).')
+			}
+		rationaletext = $("#rationalesource").html().replace('estMETs', '<span style=\'color:red;font-weight:bold\'>' + estMETs + '</span>');
+		if (rcriscore == 0)
+			{
+			rationaletext = rationaletext.replace('macerate', '0.4%');
+			rationaletext = rationaletext.replace('cvdeathrate', '0.3%');
+			rationaletext = rationaletext.replace('rcriscore', rcriscore);
+			}
+		if (rcriscore == 1)
+			{
+			rationaletext = rationaletext.replace('macerate', '0.9%');
+			rationaletext = rationaletext.replace('cvdeathrate', '0.7%');
+			rationaletext = rationaletext.replace('rcriscore', rcriscore);
+			}
+		if (rcriscore == 2)
+			{
+			rationaletext = rationaletext.replace('macerate', '<span style=\'color:red;font-weight:bold\'>7%</span>');
+			rationaletext = rationaletext.replace('cvdeathrate', '<span style=\'color:red;font-weight:bold\'>1.7%</span>');
+			rationaletext = rationaletext.replace('rcriscore', '<span style=\'color:red;font-weight:bold\'>' + rcriscore + '</span>');
+			}
+		if (rcriscore > 2)
+			{
+			//considerationstext = considerationstext.replace('<!--betas-->', '<div>&bull; <span style=\'color:red;font-weight:bold\'>Consider beta-blockers as RCRI is > 2. Do not start on day of surgery. Avoid if at risk of stroke or with uncompensated heart failure.</span>\n\n(Recommendation 6.2.1).</div>')
+			rationaletext = rationaletext.replace('macerate', '<span style=\'color:red;font-weight:bold\'>11%</span>');
+			rationaletext = rationaletext.replace('cvdeathrate', '<span style=\'color:red;font-weight:bold\'>3.6%</span>');
+			rationaletext = rationaletext.replace('rcriscore', '<span style=\'color:red;font-weight:bold\'>' + rcriscore + '</span>');
+			}
+		$("#output").html(recommendationtext + "</div><div>&nbsp;</div>" + rationaletext) 
+		$("#output").css('background','rgba(0,191,2,0.25)')
+		$("#considerations").html(considerationstext)
+	}
+	
+    //init this script when the page has loaded
+    $(document).ready(function(){
+		$('.selector').qtip({
+		style: { classes: 'myCustomClass' }
+		});
+
+	//http://qtip2.com/
+	// Apply tooltip on all <a/> elements with title attributes. Mousing over
+    // these elements will the show tooltip as expected, but mousing onto the
+    // tooltip is now possible for interaction with it's contents.
+    //$('a').each(function () {
+    $('.hastip').each(function () {
+        $(this).qtip(
+			{
+            content: {text: $("#" + $(this).attr("id") + "tip").html()},
+            hide: {
+                fixed: true,
+                delay: 300
+            },
+			position: {
+				my: 'bottom left',  // Position my top left...
+				at: 'bottom right', // at the bottom right of...
+			},
+			style: { classes: 'ToolTipClass',
+			width: false // No set width
+			}
+		});
+	});
+
+	$('.hastip').click(function(e) {
+		e.stopPropagation();
+		return false;
+	});	
+      //this is only needed when using CORS (i.e. web pages hosted outside opencpu)
+      //if(!location.pathname.match("^/ocpu/.*/appdemo/www")){
+      //  opencpu.seturl("//public.opencpu.org/ocpu/library/appdemo/R");
+      //}
+  });
+	
+    </script>
+    
+    <style>
+	  .tooltiptext{
+			display: none;
+		}
+	  .ToolTipClass{
+		color:#0022B4;
+		border-width: 3px;
+		border-color: #0022B4;
+		background-color: white;
+		max-width: 500px;
+		}
+    </style>
+	
+</head>
+<body>
+
+<h1>2014 ACC/AHA Guideline on Perioperative Cardiovascular Evaluation</h1>
+<div>The algorithm addresses evaluation of the elecitve patient only and thus does not address interventions such as beta-blockers, anti-coagulant, or anti-thrombotic agents.</div>
+<h2 style="color:#0022B4">Instructions</h2>
+<table style="border:0;width:1200px">
+<tr><td>
+<div class="container" style="width:1100px;">
+<div id="intro">
+<span style="background-color :rgba(255,160,122,0.25)">Nodes in the figure below that are colored light-salmon can be clicked for further guidance</span> and to generate text that can be copied into the electronic health record and then individualized as needed.
+</div>
+<div style="float:left;color:#0022B4;" id="leftcol">
+<svg
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   version="1.1"
+   width="510"
+   height="910"
+   id="svg2">
+  <metadata
+     id="metadata2991">
+  </metadata>
+        <image xlink:href="images/2014_algo.png" x="0" y="0" height="910" width="510"></image>
+<defs id="defs2989">
+</defs>
+	<a id="node0" class="hastip" xlink:href="#">
+		<rect id="rcri0"
+		style="fill:rgba(255,160,122,0.25)"
+		width="125"
+		height="60"
+		x="65"
+		y="90"
+		onmouseover="this.style.fill = 'rgba(255,0,0,0.25)'"
+		onmouseout="this.style.fill = 'rgba(255,160,122,0.25)'"
+		/>
+	</a>
+	<a id="node1" class="hastip" xlink:href="#">
+		<rect id="rcri"
+		style="fill:rgba(255,160,122,0.25);display:none"
+		width="125"
+		height="60"
+		x="65"
+		y="280"
+		onmouseover="this.style.fill = 'rgba(255,0,0,0.25)'"
+		onmouseout="this.style.fill = 'rgba(255,160,122,0.25)'"
+		/>
+	</a>
+	<a id="node2" class="hastip" xlink:href="#">
+	<rect id="dasi"
+		style="fill:rgba(255,160,122,0.25);display:none"
+		width="125"
+		height="60"
+		x="65"
+		y="440"
+		onmouseover="this.style.fill = 'rgba(255,0,0,0.25)'"
+		onmouseout="this.style.fill = 'rgba(255,160,122,0.25)'"
+	 />
+	</a>
+	<a id="node3" class="hastip" xlink:href="#">
+	<rect id="dasi-poor"
+		style="fill:rgba(255,160,122,0.25);display:none"
+		width="120"
+		height="70"
+		x="65"
+		y="625"
+		onmouseover="this.style.fill = 'rgba(255,0,0,0.25)'"
+		onmouseout="this.style.fill = 'rgba(255,160,122,0.25)'"
+	/>
+	</a>
+		<rect id="proceed_to_surgery1"
+		style="fill:rgba(0,191,2,0.25);display:none"
+		width="125"
+		height="60"
+		x="330"
+		y="90"
+		onmouseover="this.style.fill = 'rgba(0,191,2,0.25)'"
+		onmouseout="this.style.fill = 'rgba(0,191,2,0.25)'"
+		/>
+		<rect id="proceed_to_surgery2"
+		style="fill:rgba(0,191,2,0.25);display:none"
+		width="125"
+		height="75"
+		x="330"
+		y="615"
+		onmouseover="this.style.fill = 'rgba(0,191,2,0.25)'"
+		onmouseout="this.style.fill = 'rgba(0,191,2,0.25)'"
+		/>
+	<rect id="stress"
+		style="fill:rgba(255,160,122,0.25);display:none"
+		width="125"
+		height="60"
+		x="65"
+		y="800"
+		onmouseover="this.style.fill = 'rgba(255,0,0,0.25)'"
+		onmouseout="this.style.fill = 'rgba(255,160,122,0.25)'"
+	/>
+</svg>
+<div class="tooltiptext" id="node0tip">
+	<form id="node0form">
+		<h4 style="font-size:16px;font-weight:bold">Low risk surgery:</h4>
+		<table style="border:0">
+		<tr>
+			<td><input type="radio" name="lowrisksurgery" id="lowrisksurgery_yes" class="lowrisksurgery"/></td><td><label for="lowrisksurgery_yes:visible">Yes: ambulatory or endoscopic procedures, superficial procedures, cataract surgery, breast surgery per Table 4 in reference 1</label></td>
+		</tr>
+		<tr>
+			<td><input type="radio" name="lowrisksurgery" id="lowrisksurgery_no" class="lowrisksurgery"/></td><td><label for="lowrisksurgery_no:visible">No: other surgery type</label></td>
+		</tr>
+		<tr><td colspan=2><div>&nbsp;</div>
+		<div style="font-weight:bold">References</div>
+		<!--<div>1. RCRI was developed using patients with expected length of stay at least days. Lee et al. Circulation 1999. PMID <a target=_blank href="http://pubmed.gov">10477528</a></div>-->
+		<div>1. Fleisher LA et al. ACC/AHA 2007 guidelines on perioperative cardiovascular evaluation and care for noncardiac surgery. Circulation 2007. PMID <a target=_blank href="http://pubmed.gov/17901357">17901357</a></div>
+		<div>&nbsp;</div>
+		</td></tr>
+		</table>
+		<script>
+			function node0function(){
+			lowrisksurgery = 0;
+			$(".lowrisksurgery").each(function() {
+				if (this.checked) { 
+					if($(this).attr("id") == "lowrisksurgery_yes")
+						{
+						lowrisksurgery = 1;
+						}
+					else
+						{
+						lowrisksurgery = 0;
+						}
+				}
+			});
+			printoutput();
+			};
+		</script>
+		<button type="button" id="submit0" onClick="node0function()">Submit</button>
+        </form>
+</div>
+<div class="tooltiptext" id="node1tip">
+	<form id="node1form">
+		<h4 style="font-size:16px;font-weight:bold">Revised Cardiac Risk Index:</h4>
+		<table style="border:0">
+		<tr>
+		<td>Yes</td>
+		<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><input type="checkbox" name="rcri1" id="rcri1" class="rcri" value="1"></td>
+			<td><label for="rcri1">1. High-risk surgery (intraperitoneal, intrathoracic, or vascular surgery above the inguinal ligaments)</label></td>
+		</tr>
+		<tr>
+			<td valign="top"><input type="checkbox" id="rcri2" class="rcri" value="1"></td>
+			<td><label for="rcri2">2. History of ischemic heart disease</label>
+			<ul>
+				<li>Includes "history of myocardial infarction, history of a positive exercise test, current complaint of chest pain considered to be secondary to myocardial ischemia, use of nitrate therapy, or ECG with pathological Q waves" </li>
+				<li>Excludes: "patients with prior coronary revascularization procedures were categorized as having ischemic heart disease only if they had any of the other criteria" </li>
+			</ul>
+			</td>
+		</tr>
+		<tr>
+			<td><input type="checkbox" id="rcri3" class="rcri" value="1"></td>
+			<td><label for="rcri3">3. History of congestive heart failure?</label></td>
+		</tr>
+		<tr>
+			<td><input type="checkbox" id="rcri4" class="rcri" value="1"></td>
+			<td><label for="rcri4">4. History of cerebrovascular disease?</label></td>
+		</tr>
+		<tr>
+			<td><input type="checkbox" id="rcri5" class="rcri" value="1"></td>
+			<td><label for="rcri5">5. Preoperative treatment with insulin?</label></td>
+		</tr>
+		<tr>
+			<td><input type="checkbox" id="rcri6" class="rcri" value="1"></td>
+			<td><label for="rcri6">6. Preoperative serum creatinine >2.0 mg/dL?</label></td>
+		</tr>
+		<tr><th colspan="2">Other considerations</th></tr>
+		<tr>
+			<td><input type="checkbox" id="other1" class="other" value="1"></td>
+			<td><label for="other1">1. History of moderate to severe valvular heart disease (<a href='http://content.onlinejacc.org/article.aspx?articleid=1838843#tbl3'>definition</a>)?</label></td>
+		</tr>
+		<!--<tr>
+			<td><input type="checkbox" id="other2" class="other" value="1"></td>
+			<td><label for="other2">2. History of implantable cardiac device?</label></td>
+		</tr>-->
+		</table>
+		<script>
+			function node1function(){
+			rcriscore = 0;
+			$(".rcri:visible").each(function() {
+				if (this.checked) {
+					rcriscore += parseInt($(this).val(), 10);
+					}
+			});
+			printoutput();
+			};
+		</script>
+		<button type="button" id="submit1" onClick="node1function()">Submit</button>
+        </form>
+		<!--<div style="text-align:center"><a href="#" target=_blank>More information</a></div>-->
+</div>
+<div class="tooltiptext" id="node2tip">
+	<form id="node2form" target="target">
+		<h4 style="font-size:16px;font-weight:bold">Duke Activity Status Index:</h4>
+		<table style="border:0;width:100%">
+		<tr>
+		<td style="width:50px">Yes<br/>(with no difficulty)</td>
+		<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><input type="checkbox" id="dasi1y" value="2.75" class="dasi"></td>
+			<td style="color:black">1. Are you able to take care of yourself, that is, eating, dressing, bathing, or using the toilet?</td>
+		</tr>
+		<tr>
+			<td><input type="checkbox" id="dasi2y" value="1.75" class="dasi"></td>
+			<td style="color:black">2. Are you able to walk indoors, such as around the house?</td>
+		</tr>
+		<tr>
+			<td><input type="checkbox" id="dasi3y" value="2.75" class="dasi"></td>
+			<td style="color:black">3. Are you able to walk a block or 2 on level ground?</td>
+		</tr>
+		<tr>
+			<td><input type="checkbox" id="dasi4y" value="5.5" class="dasi"></td>
+			<td style="color:black">4. Are you able to climb a flight of stairs or walk up a hill without stopping?</td>
+		</tr>
+		<tr>
+			<td><input type="checkbox" id="dasi5y" value="8" class="dasi"></td>
+			<td>5. Are you able to run a short distance?</td>
+		</tr>
+		<tr>
+			<td><input type="checkbox" id="dasi6y" value="2.7" class="dasi"></td>
+			<td>6. Are you able to do light work around the house like dusting or washing dishes?</td>
+		</tr>
+		<tr>
+			<td><input type="checkbox" id="dasi7y" value="3.5" class="dasi"></td>
+			<td>7. Are you able to do moderate work around the house like vacuuming, sweeping floors, or carrying in the groceries?</td>
+		</tr>
+		<tr>
+			<td><input type="checkbox" id="dasi8y" value="8" class="dasi"></td>
+			<td>8. Are you able to do heavy work around the house like scrubbing floors, or lifting or moving heavy furniture?</td>
+		</tr>
+		<tr>
+			<td><input type="checkbox" id="dasi9y" value="4.5" class="dasi"></td>
+			<td>9. Are you able to do yard work like raking leaves, weeding or pushing a power mower?</td>
+		</tr>
+		<tr>
+			<td><input type="checkbox" id="dasi10y" value="5.25" class="dasi"></td>
+			<td>10. Are you having sexual relations?</td>
+		</tr>
+		<tr>
+			<td><input type="checkbox" id="dasi11y" value="6" class="dasi"></td>
+			<td>11. Are you able to participate in moderate recreational activities like golf, bowling, dancing, doubles tennis, or throwing a baseball or football?</td>
+		</tr>
+		<tr>
+			<td><input type="checkbox" id="dasi12y" value="7.5" class="dasi"></td>
+			<td>12. Are you able to participate in strenuous sports like swimming, singles tennis, football, basketball or skiing?</td>
+		</tr>
+		</table>
+		<script>
+		//"Examples of activities associated with >4 METs are climbing a flight
+		//of stairs or walking up a hill, walking on level ground at 4 mph, and performing heavy work around the house"
+			function node2function(){
+			var dasiscore = 0;
+			$(".dasi").each(function() {
+				if (this.checked) {
+				  dasiscore = dasiscore + 1*parseFloat($(this).val()).toFixed(2);
+				  }
+			vo2peak = (dasiscore*0.43 + 9.6)
+			estMETs = (vo2peak/3.5).toFixed(1)
+			});
+			printoutput();
+			};
+		</script>
+		<button type="button" id="submit2" onClick="node2function()">Submit</button>
+        </form>
+		<div style="text-align:center">Hint: answering yes to first 4 questions qualifies for moderate functional capacity.</div>
+</div>
+
+<div class="tooltiptext" id="node3tip">
+	<form id="node0form">
+		<h4 style="font-size:16px;font-weight:bold">Stress testing?</h4>
+		Will stress testing affect decision making or postoperative care (Recs 5.3 and 5.4 of AHA/ACC 2014 Guidelines)
+		<table style="border:0">
+		<tr>
+			<td><input type="radio" name="stresshelp" id="stresshelp_yes" class="stresshelp"/></td><td><label for="stresshelp_yes:visible">Yes</label></td>
+		</tr>
+		<tr>
+			<td><input type="radio" name="stresshelp" id="stresshelp_no" class="stresshelp"/></td><td><label for="stresshelp_no:visible">No</label></td>
+		</tr>
+		</table>
+		<script>
+			function node3function(){
+			stresshelp = 0;
+			$(".stresshelp").each(function() {
+				if (this.checked) { 
+					if($(this).attr("id") == "stresshelp_yes")
+						{
+						stresshelp = 1;
+						}
+					else
+						{
+						stresshelp = 0;
+						}
+				}
+			});
+			printoutput();
+			};
+		</script>
+		<button type="button" id="submit3" onClick="node3function()">Submit</button>
+        </form>
+</div>
+
+</div>
+<div style="float:right;color:#0022B4;width:550px" id="rightcol">
+<h2>Proposed text to place and edit in the electronic health record</h2>
+<div onFocus="this.select()" id="output" style="border:3px;border-color:#0022B4;border-style: solid;padding:10px;">
+Proposed text will be here.
+</div>
+<h2>Additional considerations for this patient</h2>
+<div>Revise recommendations above based on these and other considerations.</div>
+<div onFocus="this.select()" id="considerations" style="border:3px;border-color:#0022B4;border-style: solid;padding:10px">
+Pending.
+</div>
+
+<!-- Start of hidden fields -->
+<div id="recommendationssource" style="display:none">
+<div>I recommend:</div>
+<div>1. </div>
+</div>
+
+<div id="rationalesource" style="display:none">
+<div style='font-weight:bold'>Rationale:</div>
+<div>The Revised Cardiac Risk Index (RCRI) is: rcriscore <span style="color:rgba( 0, 34, 180,0.5)">(a score of 2 or more is high risk)</span>.</div>
+<div>&bull; Major adverse cardiac event (MACE) of death or myocardial infarction: macerate</div>
+<div>&bull; Cardiovascular death:  cvdeathrate.</div>
+<div>The estimated functional capacity in metabolic equivalents (METs) per the Duke Activity Status Index is: estMETs.</div>
+</div>
+
+<div id="considerationssource" style="display:none">
+<!--ecg-->
+<!--ischemic heart-->
+<!--betas-->
+<!--dasi-poor-->
+<!--failure-->
+<!--valves-->
+<!--devices-->
+</div>
+<!-- End of hidden fields -->
+
+</div>
+</div>
+</td></tr></table>
+<div style="clear:both">
+
+<h2 style="color:#0022B4">References</h2>
+<h3>American College of Cardiology/American Heart Association Guidelines</h3>
+<ol>
+<li><strong>2014:</strong> Fleisher LA et al. 2014 ACC/AHA Guideline on Perioperative Cardiovascular Evaluation and Management of Patients Undergoing Noncardiac Surgery: A Report of the American College of Cardiology/American Heart Association Task Force on Practice Guidelines. J Am Coll Cardiol. 2014 Jul 29. pii: S0735-1097(14)05536-3. doi:<a href="http://dx.doi.org/10.1016/j.jacc.2014.07.944">10.1016/j.jacc.2014.07.944</a>. PMID: <a href="http://pubmed.gov/25091544">25091544</a>.</li>
+<li><strong>2007:</strong> Fleisher LA et al. American College of Cardiology/American Heart Association Task Force on Practice Guidelines (Writing Committee to Revise the 2002 Guidelines on Perioperative Cardiovascular Evaluation for Noncardiac Surgery); American Society of Echocardiography; American Society of Nuclear Cardiology; Heart Rhythm Society; Society of Cardiovascular Anesthesiologists; Society for Cardiovascular Angiography and Interventions; Society for Vascular Medicine and Biology; Society for Vascular Surgery. ACC/AHA 2007 guidelines on perioperative cardiovascular evaluation and care for noncardiac surgery: a report of the American College of Cardiology/American Heart Association Task Force on Practice Guidelines (Writing Committee to Revise the 2002 Guidelines on Perioperative Cardiovascular Evaluation for Noncardiac Surgery): developed in collaboration with the American  Society of Echocardiography, American Society of Nuclear Cardiology, Heart Rhythm Society, Society of Cardiovascular Anesthesiologists, Society for Cardiovascular  Angiography and Interventions, Society for Vascular Medicine and Biology, and Society for Vascular Surgery. Circulation. 2007. PMID: <a href="http://pubmed/gov/17901357">17901357</a>.</li>
+<li><strong>2002:</strong> Eagle KA et al. American College of Cardiology/American Heart Association Task Force on Practice Guidelines (Committee to Update the 1996 Guidelines on Perioperative Cardiovascular Evaluation for Noncardiac Surgery). ACC/AHA guideline update for perioperative cardiovascular evaluation for noncardiac surgery---executive summary a report of the American College of Cardiology/American Heart Association Task Force on Practice Guidelines (Committee to Update the 1996 Guidelines on Perioperative Cardiovascular Evaluation for Noncardiac Surgery). Circulation. 2002. PMID: <a href="http://pubmed.gov/11889023">11889023</a>.</li>
+</ol>
+<h3>Other</h3>
+<ol>
+<li>Ford MK, Beattie WS, Wijeysundera DN. Systematic review: prediction of perioperative cardiac complications and mortality by the revised cardiac risk index. Ann Intern Med. 2010 Jan 5;152(1):26-35. doi:<a href="http://dx.doi.org/10.7326/0003-4819-152-1-201001050-00007">10.7326/0003-4819-152-1-201001050-00007</a>. PMID: <a href="http://pubmed.gov/20048269">20048269</a>.</li>
+<li>Hlatky MA, Boineau RE, Higginbotham MB, Lee KL, Mark DB, Califf RM, Cobb FR, Pryor DB. A brief self-administered questionnaire to determine functional capacity (the Duke Activity Status Index). Am J Cardiol. 1989;64:651-4. doi: <a href="http://dx.dooi.org/10.1016/0002-9149(89)90496-7">10.1016/0002-9149(89)90496-7</a> PMID: <a href="http://pubmed.gov/2782256">2782256</a></li>
+<li>Lee TH, Marcantonio ER, Mangione CM, Thomas EJ, Polanczyk CA, Cook EF, Sugarbaker DJ, Donaldson MC, Poss R, Ho KK, Ludwig LE, Pedan A, Goldman L. Derivation and prospective validation of a simple index for prediction of cardiac risk of major noncardiac surgery. Circulation. 1999;100(10):1043-9. PMID: <a href="http://pubmed.gov/10477528">10477528</a>.</li>
+<li>Boersma E, Kertai MD, Schouten O, Bax JJ, Noordzij P, Steyerberg EW, Schinkel  AF, van Santen M, Simoons ML, Thomson IR, Klein J, van Urk H, Poldermans D. Perioperative cardiovascular mortality in noncardiac surgery: validation of the Lee cardiac risk index. Am J Med. 2005;118(10):1134-41. PMID: <a href="http://pubmed.gov/16194645">16194645</a>.</li>
+</ol>
+</div>
+</body>
+</html>
