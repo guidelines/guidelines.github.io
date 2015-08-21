@@ -235,6 +235,10 @@ for ( var i = -14; i < 14; i++ ) {
 		{
 		dateLabel.setDate(dayLabel + 1);
 		}
+	else if (proposedDate < 0 && i > -14)
+		{
+		dateLabel.setDate(dayLabel + 1);
+		}
 	else
 		{
 		dateLabel.setDate(proposedDate);
