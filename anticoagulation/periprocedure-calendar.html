@@ -116,6 +116,7 @@ $("#a" + i).val("");
 }
 //Start populating calendar
 var dateOfProcedure = $("#datepicker").datepicker('getDate');
+var proposedDate;
 var dateLabel = new Date();
 var dayLabel;
 var dayOfMonth = dateOfProcedure.getDate();
@@ -229,11 +230,19 @@ if ($("#INRdaybefore_yes").is(':checked')){
 $("#a" + eval(dayOfProcedure - 1)).val($("#a" + eval(dayOfProcedure - 1)).val().replace("\n\n\n\n","\n\nINR check\n\n"));
 }
 for ( var i = -14; i < 14; i++ ) {
-dateLabel.setDate(dateOfProcedure.getDate() + i);
-dayLabel = dateLabel.getDate();
-alert("i: " + i + "\ndateOfProcedure.getDate() + i: " + eval(dateOfProcedure.getDate() + i) + "\ndateLabel: " + dateLabel + "\ndayLabel: " + dayLabel);
-$("#d" + eval(dayOfProcedure + i)).html(dayLabel);
-}
+	proposedDate = dateOfProcedure.getDate() + i;
+	if (proposedDate > 32)
+		{
+		dateLabel = proposedDate - dateLabel
+		}
+	else
+		{
+		dateLabel.setDate(proposedDate);
+		}
+	dayLabel = dateLabel.getDate();
+	alert("i: " + i + "\nproposedDate: " + proposedDate + "\ndateLabel: " + dateLabel + "\ndayLabel: " + dayLabel);
+	$("#d" + eval(dayOfProcedure + i)).html(dayLabel);
+	}
 $("#pt_instructions").html("");
 if ($("#tranexamic_acid").is(':checked'))
 {
