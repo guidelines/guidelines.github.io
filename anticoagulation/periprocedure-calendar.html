@@ -240,13 +240,15 @@ for ( var i = -14; i < 14; i++ ) {
 		//dateLabel.setDate(dayLabel + 1);
 		dateLabel.setDate(32); //Remind system of current month
 		dateLabel.setDate(proposedDate);
+		//if (proposedDate == 0){dateLabel.setMonth(dateLabel.getMonth()+1)}
+		//2015-08-21 - actually, dateLabel is not resetting to next month, but seems ok.
 		}
 	else
 		{
 		dateLabel.setDate(proposedDate);
 		}
 	dayLabel = dateLabel.getDate();
-	alert("i: " + i + "\nproposedDate: " + proposedDate + "\ndateLabel: " + dateLabel + "\ndayLabel: " + dayLabel.toString());
+	//alert("i: " + i + "\nproposedDate: " + proposedDate + "\ndateLabel: " + dateLabel + "\ndayLabel: " + dayLabel.toString());
 	$("#d" + eval(dayOfProcedure + i)).html(dayLabel.toString());
 	}
 $("#pt_instructions").html("");
