@@ -233,11 +233,11 @@ for ( var i = -14; i < 14; i++ ) {
 	proposedDate = dateOfProcedure.getDate() + i;
 	if (proposedDate > 32)
 		{
-		dateLabel = setDate(dateLabel + 1);
+		dateLabel.setDate(dateLabel + 1);
 		}
 	else
 		{
-		dateLabel = setDate(proposedDate);
+		dateLabel.setDate(proposedDate);
 		}
 	dayLabel = dateLabel.getDate();
 	alert("i: " + i + "\nproposedDate: " + proposedDate + "\ndateLabel: " + dateLabel + "\ndayLabel: " + dayLabel);
