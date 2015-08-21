@@ -231,7 +231,7 @@ $("#a" + eval(dayOfProcedure - 1)).val($("#a" + eval(dayOfProcedure - 1)).val().
 for ( var i = -14; i < 14; i++ ) {
 dateLabel.setDate(dateOfProcedure.getDate() + i);
 dayLabel = dateLabel.getDate();
-alert("i: " + i + "\ndayLabel: " + dayLabel);
+alert("i: " + i + "\ndaydateLabel: " + dateLabel + "\ndayLabel: " + dayLabel); 
 $("#d" + eval(dayOfProcedure + i)).html(dayLabel);
 }
 $("#pt_instructions").html("");
