@@ -240,8 +240,8 @@ for ( var i = -14; i < 14; i++ ) {
 		dateLabel.setDate(proposedDate);
 		}
 	dayLabel = dateLabel.getDate();
-	alert("i: " + i + "\nproposedDate: " + proposedDate + "\ndateLabel: " + dateLabel + "\ndayLabel: " + dayLabel);
-	$("#d" + eval(dayOfProcedure + i)).html(dayLabel);
+	alert("i: " + i + "\nproposedDate: " + proposedDate + "\ndateLabel: " + dateLabel + "\ndayLabel: " + dayLabel.toString());
+	$("#d" + eval(dayOfProcedure + i)).html(dayLabel.toString());
 	}
 $("#pt_instructions").html("");
 if ($("#tranexamic_acid").is(':checked'))
